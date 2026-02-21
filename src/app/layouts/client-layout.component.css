@@ -1,0 +1,11 @@
+.client-nav-link {
+    @apply flex flex-col items-center justify-center text-gray-400 transition-all duration-300;
+}
+
+.client-nav-link.active {
+    @apply text-blue-600 scale-110;
+}
+
+.client-nav-link:active {
+    @apply opacity-70 scale-95;
+}
