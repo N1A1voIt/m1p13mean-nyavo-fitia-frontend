@@ -1,15 +1,15 @@
 <div class="min-h-screen bg-background text-text-primary">
   <!-- Top Nav -->
-  <nav class="bg-sidebar border-b border-border px-8 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-accent rounded-lg"></div>
+  <nav class="bg-sidebar border-b border-border px-8 py-4 flex justify-between items-center shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white font-bold text-xl">M</div>
       <span class="text-xl font-bold tracking-tight">Mall Customer</span>
     </div>
     <div class="flex items-center gap-6">
       <span class="text-text-secondary">Welcome, <span class="text-text-primary font-medium">{{ user?.name }}</span></span>
       <button 
         (click)="logout()" 
-        class="px-4 py-2 bg-transparent border border-border hover:bg-border rounded-lg text-sm font-semibold transition-all"
+        class="px-4 py-2 bg-transparent border border-border hover:bg-card rounded-lg text-sm font-semibold transition-all active:scale-95"
       >
         Logout
       </button>
@@ -18,23 +18,25 @@
 
   <main class="p-8 max-w-7xl mx-auto">
     <header class="mb-12">
-      <h2 class="text-4xl font-bold mb-2">Discover Shops</h2>
-      <p class="text-text-secondary">Find your favorite products in our marketplace.</p>
+      <h2 class="text-4xl font-bold mb-2 tracking-tight text-text-primary">Discover Shops</h2>
+      <p class="text-text-secondary text-lg">Find your favorite products in our modern marketplace.</p>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- Placeholder Cards -->
-      <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-card border border-border rounded-2xl p-6 hover:shadow-xl hover:shadow-accent/5 transition-all group cursor-pointer">
-        <div class="aspect-video bg-background rounded-xl mb-4 overflow-hidden">
-           <div class="w-full h-full bg-gradient-to-br from-sidebar to-card group-hover:scale-110 transition-transform duration-500"></div>
+      <app-card *ngFor="let i of [1,2,3,4,5,6]" [hoverable]="true" [padding]="true">
+        <div class="aspect-video bg-background rounded-xl mb-6 overflow-hidden relative">
+           <div class="w-full h-full bg-gradient-to-br from-accent/20 to-accent-secondary/20 group-hover:scale-110 transition-transform duration-500"></div>
+           <div class="absolute inset-0 flex items-center justify-center">
+             <span class="text-xs font-bold text-accent uppercase tracking-widest border border-accent/20 px-3 py-1 rounded-full bg-white/50 backdrop-blur-sm">Featured</span>
+           </div>
         </div>
-        <h3 class="text-xl font-bold mb-1">Mall Store #{{i}}</h3>
-        <p class="text-text-secondary text-sm">Explore the latest collection of premium products.</p>
-        <div class="mt-4 flex items-center justify-between">
-          <span class="text-xs font-bold px-2 py-1 bg-accent/10 text-accent rounded uppercase tracking-wider">Open</span>
-          <span class="text-accent group-hover:translate-x-1 transition-transform">→</span>
+        <h3 class="text-2xl font-bold mb-2 text-text-primary tracking-tight">Mall Store #{{i}}</h3>
+        <p class="text-text-secondary text-sm leading-relaxed mb-6">Explore the latest collection of premium products and unique finds.</p>
+        <div class="flex items-center justify-between pt-2 border-t border-border/50">
+          <app-badge variant="success">Open Now</app-badge>
+          <span class="text-accent font-bold group-hover:translate-x-1 transition-transform">View Store →</span>
         </div>
-      </div>
+      </app-card>
     </div>
   </main>
 </div>

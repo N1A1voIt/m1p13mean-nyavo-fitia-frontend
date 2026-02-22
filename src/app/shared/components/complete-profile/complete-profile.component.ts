@@ -1,15 +1,17 @@
-/* Reference: AI_CONTEXT_FRONTEND.md */
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { Auth, user } from '@angular/fire/auth';
 import { firstValueFrom } from 'rxjs';
+import { ButtonComponent } from '../ui/button/button.component';
+import { InputComponent } from '../ui/input/input.component';
+import { CardComponent } from '../ui/card/card.component';
 
 @Component({
   selector: 'app-complete-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ButtonComponent, InputComponent, CardComponent],
   templateUrl: './complete-profile.component.html',
   styleUrl: './complete-profile.component.css'
 })

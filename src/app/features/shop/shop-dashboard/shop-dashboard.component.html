@@ -1,72 +1,94 @@
 <div class="min-h-screen bg-background text-text-primary flex">
   <!-- Sidebar -->
-  <aside class="w-64 bg-sidebar border-r border-border p-6 flex flex-col">
-    <div class="flex items-center gap-2 mb-12">
-      <div class="w-8 h-8 bg-accent rounded-lg"></div>
+  <aside class="w-72 bg-sidebar border-r border-border p-8 flex flex-col shadow-xl">
+    <div class="flex items-center gap-3 mb-12">
+      <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white font-bold text-xl">S</div>
       <span class="text-xl font-bold tracking-tight">Shop Console</span>
     </div>
 
     <nav class="flex-1 space-y-2">
-      <a href="#" class="flex items-center gap-3 px-4 py-3 bg-accent/10 text-accent rounded-xl font-medium">Dashboard</a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-border rounded-xl transition-all">My Products</a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-border rounded-xl transition-all">Orders</a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-border rounded-xl transition-all">Settings</a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 bg-accent/10 text-accent rounded-xl font-bold">
+        <span class="text-lg">📊</span> Dashboard
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-card rounded-xl transition-all font-medium">
+        <span class="text-lg">📦</span> Products
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-card rounded-xl transition-all font-medium">
+        <span class="text-lg">🛍️</span> Orders
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-card rounded-xl transition-all font-medium">
+        <span class="text-lg">⚙️</span> Settings
+      </a>
     </nav>
 
-    <div class="pt-6 border-t border-border mt-auto">
-      <div class="mb-4">
-        <p class="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">Owner</p>
-        <p class="text-sm font-medium">{{ user?.name }}</p>
+    <div class="pt-8 border-t border-border mt-auto">
+      <div class="mb-6">
+        <p class="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Authenticated As</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs">
+            {{ user?.name?.charAt(0) }}
+          </div>
+          <p class="text-sm font-bold text-text-primary">{{ user?.name }}</p>
+        </div>
       </div>
-      <button 
-        (click)="logout()" 
-        class="w-full py-2 bg-transparent border border-border hover:bg-border rounded-lg text-sm font-semibold transition-all"
-      >
+      <app-button variant="outline" (onClick)="logout()">
         Logout
-      </button>
+      </app-button>
     </div>
   </aside>
 
   <!-- Main Content -->
   <main class="flex-1 p-12 overflow-y-auto">
-    <header class="flex justify-between items-end mb-12">
+    <header class="flex justify-between items-center mb-16">
       <div>
-        <h1 class="text-4xl font-bold tracking-tight">Dashboard Overview</h1>
-        <p class="text-text-secondary mt-2">Manage your products and monitor store performance.</p>
+        <h1 class="text-5xl font-black tracking-tight text-text-primary">Console</h1>
+        <p class="text-text-secondary text-lg mt-2 font-medium">Overview of your shop's recent activities.</p>
       </div>
-      <button class="bg-accent hover:opacity-90 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-accent/20 transition-all active:scale-[0.98]">
-        + Add New Product
-      </button>
+      <div class="w-fit">
+        <app-button>+ Add New Product</app-button>
+      </div>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-      <div class="bg-card border border-border p-8 rounded-2xl">
-        <p class="text-text-secondary font-medium mb-1">Total Sales</p>
-        <p class="text-3xl font-bold">$12,840.00</p>
-        <div class="mt-4 text-sm text-green-500 font-medium">↑ 12% from last month</div>
-      </div>
-      <div class="bg-card border border-border p-8 rounded-2xl">
-        <p class="text-text-secondary font-medium mb-1">Orders</p>
-        <p class="text-3xl font-bold">142</p>
-        <div class="mt-4 text-sm text-green-500 font-medium">↑ 5% from last month</div>
-      </div>
-      <div class="bg-card border border-border p-8 rounded-2xl">
-        <p class="text-text-secondary font-medium mb-1">Stock Alerts</p>
-        <p class="text-3xl font-bold">3</p>
-        <div class="mt-4 text-sm text-red-500 font-medium">Critical level</div>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <app-card [padding]="true">
+        <p class="text-text-muted font-bold text-xs uppercase tracking-widest mb-2">Total Sales</p>
+        <p class="text-4xl font-black text-text-primary tracking-tight">$12,840.00</p>
+        <div class="mt-4 flex items-center gap-2">
+          <app-badge variant="success">↑ 12.5%</app-badge>
+          <span class="text-text-muted text-xs font-medium italic">vs last month</span>
+        </div>
+      </app-card>
+      
+      <app-card [padding]="true">
+        <p class="text-text-muted font-bold text-xs uppercase tracking-widest mb-2">Active Orders</p>
+        <p class="text-4xl font-black text-text-primary tracking-tight">142</p>
+        <div class="mt-4 flex items-center gap-2">
+          <app-badge variant="info">Pending</app-badge>
+          <span class="text-text-muted text-xs font-medium italic">Processing now</span>
+        </div>
+      </app-card>
+
+      <app-card [padding]="true">
+        <p class="text-text-muted font-bold text-xs uppercase tracking-widest mb-2">Inventory</p>
+        <p class="text-4xl font-black text-text-primary tracking-tight">3</p>
+        <div class="mt-4 flex items-center gap-2">
+          <span class="text-red-500 font-black text-xs uppercase tracking-widest">Low Stock Alert</span>
+        </div>
+      </app-card>
     </div>
 
     <section>
-      <div class="bg-card border border-border rounded-2xl overflow-hidden">
-        <div class="px-8 py-6 border-b border-border flex justify-between items-center">
-          <h3 class="font-bold text-xl">Recent Orders</h3>
-          <a href="#" class="text-accent text-sm font-semibold hover:underline">View All</a>
+      <app-card [padding]="false">
+        <div class="px-10 py-8 border-b border-border flex justify-between items-center bg-card/30">
+          <h3 class="font-black text-2xl tracking-tight">Recent Orders</h3>
+          <app-badge variant="muted">Last 24 Hours</app-badge>
         </div>
-        <div class="p-8 text-center text-text-muted">
-          No orders received in the last 24 hours.
+        <div class="p-20 text-center flex flex-col items-center">
+          <div class="text-5xl mb-4 grayscale opacity-50">📤</div>
+          <p class="text-text-muted font-bold text-lg tracking-tight">Your order queue is currently empty.</p>
+          <p class="text-text-muted/60 text-sm mt-1 uppercase tracking-widest">New orders will show up here</p>
         </div>
-      </div>
+      </app-card>
     </section>
   </main>
 </div>
