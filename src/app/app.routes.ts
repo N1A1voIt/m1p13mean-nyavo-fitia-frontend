@@ -20,7 +20,6 @@ export const routes: Routes = [
   {
     path: 'complete-profile',
     loadComponent: () => import('./shared/components/complete-profile/complete-profile.component').then(m => m.CompleteProfileComponent),
-    // Only users without a role yet can access this
     canActivate: [() => {
       const authService = inject(AuthService);
       const router = inject(Router);
@@ -30,7 +29,6 @@ export const routes: Routes = [
         map(() => {
           const user = authService.currentUserValue;
           if (!user) return router.parseUrl('/login');
-          // If they already have a role, they don't need to be here
           if (user.role !== undefined && user.role !== null) {
             router.navigate(['/']);
             return false;
@@ -62,25 +60,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    canActivate: [() => {
-      const authService = inject(AuthService);
-      const router = inject(Router);
-      return authService.initialised$.pipe(
-        filter(init => init === true),
-        take(1),
-        map(() => {
-          const user = authService.currentUserValue;
-          if (!user) return router.parseUrl('/login');
-
-          switch (user.role) {
-            case 2: return router.parseUrl('/admin');
-            case 1: return router.parseUrl('/shop');
-            case 0: return router.parseUrl('/customer');
-            default: return router.parseUrl('/login');
-          }
-        })
-      );
-    }]
+    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
   },
   { path: '**', redirectTo: '' }
 ];

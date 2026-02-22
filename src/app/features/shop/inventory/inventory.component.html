@@ -1,0 +1,67 @@
+<div class="space-y-8">
+  <header class="flex justify-between items-center">
+    <div>
+      <h2 class="text-4xl font-black tracking-tight text-text-primary">Inventory</h2>
+      <p class="text-text-secondary font-medium mt-1">Manage your stock levels and products.</p>
+    </div>
+    <app-button (onClick)="showAddForm = !showAddForm">
+      {{ showAddForm ? 'Cancel' : '+ Add Product' }}
+    </app-button>
+  </header>
+
+  <!-- Add Product Form -->
+  <app-card *ngIf="showAddForm" class="mb-8">
+    <form (ngSubmit)="onAddProduct()" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <app-input label="Product Name" [(ngModel)]="newProduct.name" name="name" placeholder="E.g. Coffee" [required]="true"></app-input>
+      <app-input label="Price" type="number" [(ngModel)]="newProduct.price" name="price" placeholder="0.00"></app-input>
+      <app-input label="Stock" type="number" [(ngModel)]="newProduct.quantity" name="quantity" placeholder="0"></app-input>
+      <app-button type="submit">Save Product</app-button>
+    </form>
+  </app-card>
+
+  <!-- Products List -->
+  <app-card [padding]="false">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-card/50 border-b border-border">
+          <tr>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Product</th>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Price</th>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Stock</th>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr *ngFor="let product of products" class="hover:bg-card/30 transition-colors group">
+            <td class="px-8 py-6">
+              <p class="font-bold text-text-primary underline decoration-accent/30 underline-offset-4">{{ product.name }}</p>
+              <p class="text-xs text-text-muted mt-1">{{ product.category || 'General' }}</p>
+            </td>
+            <td class="px-8 py-6 font-mono font-bold text-accent">
+              {{ product.price | currency:'EUR' }}
+            </td>
+            <td class="px-8 py-6">
+              <div class="flex items-center gap-3">
+                <app-badge [variant]="product.quantity > 5 ? 'success' : 'muted'">
+                  {{ product.quantity }} in stock
+                </app-badge>
+              </div>
+            </td>
+            <td class="px-8 py-6 text-right">
+              <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button (click)="updateStock(product, -1)" class="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-accent hover:text-white transition-all"> - </button>
+                <button (click)="updateStock(product, 1)" class="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-accent hover:text-white transition-all"> + </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="products.length === 0 && !loading">
+            <td colspan="4" class="px-8 py-20 text-center text-text-muted bg-card/10">
+              <p class="text-3xl mb-2">📦</p>
+              <p class="font-bold">No products found. Start by adding one!</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+</div>

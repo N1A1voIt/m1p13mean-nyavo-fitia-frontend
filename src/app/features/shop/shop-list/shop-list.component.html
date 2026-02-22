@@ -1,0 +1,64 @@
+<div class="max-w-4xl mx-auto py-20 px-6">
+  <div class="text-center mb-16">
+    <h1 class="text-6xl font-black tracking-tighter text-text-primary mb-4">Your Shops</h1>
+    <p class="text-text-secondary text-xl font-medium">Select a shop to manage or create a new one.</p>
+  </div>
+
+  <!-- Create Shop UI -->
+  <div class="mb-12">
+    <div *ngIf="!showCreateForm" class="flex justify-center">
+      <app-button (onClick)="showCreateForm = true">+ Register New Shop</app-button>
+    </div>
+
+    <app-card *ngIf="showCreateForm" [padding]="true" class="max-w-md mx-auto relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-full h-1 bg-accent"></div>
+      <h3 class="text-2xl font-black mb-6">New Shop Setup</h3>
+      <form (ngSubmit)="onCreateShop()" class="space-y-6">
+        <app-input label="Shop Name" [(ngModel)]="newShop.name" name="name" placeholder="E.g. Downtown Coffee" [required]="true"></app-input>
+        <app-input label="Box ID (Optional)" [(ngModel)]="newShop.boxId" name="boxId" placeholder="E.g. BOX-101"></app-input>
+        <div class="flex gap-4">
+          <app-button type="submit" class="flex-1">Create Shop</app-button>
+          <app-button variant="outline" (onClick)="showCreateForm = false">Cancel</app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Shops Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8" *ngIf="!loading">
+    <app-card 
+      *ngFor="let shop of shops" 
+      [hoverable]="true" 
+      [padding]="true" 
+      (click)="onSelectShop(shop)"
+      class="group cursor-pointer border-2 border-transparent hover:border-accent/30 transition-all"
+    >
+      <div class="flex justify-between items-start">
+        <div>
+          <app-badge variant="info" class="mb-4">{{ shop.shopRef }}</app-badge>
+          <h2 class="text-3xl font-black text-text-primary group-hover:text-accent transition-colors">{{ shop.name }}</h2>
+          <p class="text-text-muted mt-2 font-medium" *ngIf="shop.boxId">📍 Box: {{ shop.boxId }}</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-accent/5 flex items-center justify-center text-accent text-xl group-hover:scale-110 transition-transform">
+          🏬
+        </div>
+      </div>
+      
+      <div class="mt-8 pt-6 border-t border-border flex justify-between items-center">
+        <span class="text-xs font-black uppercase tracking-widest text-text-muted">Manager Mode</span>
+        <span class="text-accent font-bold group-hover:translate-x-1 transition-transform">Enter Dashboard →</span>
+      </div>
+    </app-card>
+
+    <!-- Empty State -->
+    <div *ngIf="shops.length === 0" class="col-span-full py-20 bg-card/10 rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center">
+      <div class="text-6xl mb-6">🏜️</div>
+      <p class="text-2xl font-bold text-text-muted">You haven't registered any shops yet.</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center py-20">
+    <div class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+  </div>
+</div>

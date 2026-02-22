@@ -1,0 +1,53 @@
+<div class="space-y-8">
+  <header>
+    <h2 class="text-4xl font-black tracking-tight text-text-primary">Stock Movements</h2>
+    <p class="text-text-secondary font-medium mt-1">Audit log of all inventory changes.</p>
+  </header>
+
+  <app-card [padding]="false">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-card/50 border-b border-border">
+          <tr>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Reference</th>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Type</th>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Items</th>
+            <th class="px-8 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr *ngFor="let mvt of movements" class="hover:bg-card/30 transition-colors">
+            <td class="px-8 py-6">
+              <p class="font-mono font-bold text-accent">{{ mvt.mvtRef }}</p>
+              <p class="text-[10px] text-text-muted mt-1" *ngIf="mvt.sourceId">Source: {{ mvt.sourceId.slice(-6) }}</p>
+            </td>
+            <td class="px-8 py-6">
+              <app-badge [variant]="mvt.type === 'IN' ? 'success' : (mvt.type === 'OUT' ? 'muted' : 'info')">
+                {{ mvt.type }}
+              </app-badge>
+            </td>
+            <td class="px-8 py-6">
+              <div class="space-y-1">
+                <div *ngFor="let item of mvt.items" class="flex items-center gap-2">
+                  <span class="font-black" [ngClass]="item.quantity > 0 ? 'text-green-500' : 'text-red-500'">
+                    {{ item.quantity > 0 ? '+' : '' }}{{ item.quantity }}
+                  </span>
+                  <span class="text-sm font-medium text-text-primary">{{ item.productId?.name || 'Unknown Product' }}</span>
+                  <span class="text-[10px] text-text-muted italic" *ngIf="item.reason">({{ item.reason }})</span>
+                </div>
+              </div>
+            </td>
+            <td class="px-8 py-6 text-text-muted text-sm serif">
+              {{ mvt.createdAt | date:'short' }}
+            </td>
+          </tr>
+          <tr *ngIf="movements.length === 0 && !loading">
+            <td colspan="4" class="px-8 py-20 text-center text-text-muted">
+              No movements recorded yet.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+</div>

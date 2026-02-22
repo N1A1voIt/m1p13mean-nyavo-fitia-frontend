@@ -1,94 +1,82 @@
-<div class="min-h-screen bg-background text-text-primary flex">
-  <!-- Sidebar -->
-  <aside class="w-72 bg-sidebar border-r border-border p-8 flex flex-col shadow-xl">
-    <div class="flex items-center gap-3 mb-12">
-      <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white font-bold text-xl">S</div>
-      <span class="text-xl font-bold tracking-tight">Shop Console</span>
-    </div>
+<ng-container *ngIf="(selectedShop$ | async) as shop; else selector">
+  <div class="min-h-screen bg-background text-text-primary flex">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-sidebar border-r border-border p-8 flex flex-col shadow-xl">
+      <div class="flex items-center gap-3 mb-10">
+        <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white font-bold text-xl">S</div>
+        <div>
+          <span class="block text-xl font-bold tracking-tight">Shop Console</span>
+          <span class="block text-[10px] uppercase tracking-widest text-accent font-black">{{ shop.name }}</span>
+        </div>
+      </div>
 
-    <nav class="flex-1 space-y-2">
-      <a href="#" class="flex items-center gap-3 px-4 py-3 bg-accent/10 text-accent rounded-xl font-bold">
-        <span class="text-lg">📊</span> Dashboard
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-card rounded-xl transition-all font-medium">
-        <span class="text-lg">📦</span> Products
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-card rounded-xl transition-all font-medium">
-        <span class="text-lg">🛍️</span> Orders
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-card rounded-xl transition-all font-medium">
-        <span class="text-lg">⚙️</span> Settings
-      </a>
-    </nav>
+      <nav class="flex-1 space-y-2">
+        <button 
+          (click)="setTab('inventory')" 
+          class="w-full flex items-center gap-3 px-4 py-3 transition-all rounded-xl font-bold"
+          [ngClass]="currentTab === 'inventory' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-card'"
+        >
+          <span class="text-lg">📦</span> Inventory
+        </button>
+        <button 
+          (click)="setTab('pos')" 
+          class="w-full flex items-center gap-3 px-4 py-3 transition-all rounded-xl font-bold"
+          [ngClass]="currentTab === 'pos' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-card'"
+        >
+          <span class="text-lg">⚡</span> One-Tap POS
+        </button>
+        <button 
+          (click)="setTab('orders')" 
+          class="w-full flex items-center gap-3 px-4 py-3 transition-all rounded-xl font-bold"
+          [ngClass]="currentTab === 'orders' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-card'"
+        >
+          <span class="text-lg">🛍️</span> Orders Inbox
+        </button>
+        <button 
+          (click)="setTab('movements')" 
+          class="w-full flex items-center gap-3 px-4 py-3 transition-all rounded-xl font-bold"
+          [ngClass]="currentTab === 'movements' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-card'"
+        >
+          <span class="text-lg">📜</span> Stock History
+        </button>
+      </nav>
 
-    <div class="pt-8 border-t border-border mt-auto">
-      <div class="mb-6">
-        <p class="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Authenticated As</p>
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs">
-            {{ user?.name?.charAt(0) }}
+      <div class="pt-8 border-t border-border mt-auto space-y-4">
+        <button 
+          (click)="switchShop()" 
+          class="w-full text-left px-4 py-3 text-xs font-bold text-text-muted hover:text-accent transition-colors flex items-center gap-2"
+        >
+          <span>🔄</span> Switch Shop
+        </button>
+        
+        <div>
+          <p class="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Logged in as</p>
+          <div class="flex items-center gap-3 p-2 bg-card/30 rounded-xl">
+            <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs shrink-0">
+              {{ user?.name?.charAt(0) }}
+            </div>
+            <p class="text-sm font-bold text-text-primary truncate">{{ user?.name }}</p>
           </div>
-          <p class="text-sm font-bold text-text-primary">{{ user?.name }}</p>
         </div>
+        
+        <app-button variant="outline" (onClick)="logout()" class="w-full">
+          Logout
+        </app-button>
       </div>
-      <app-button variant="outline" (onClick)="logout()">
-        Logout
-      </app-button>
-    </div>
-  </aside>
+    </aside>
 
-  <!-- Main Content -->
-  <main class="flex-1 p-12 overflow-y-auto">
-    <header class="flex justify-between items-center mb-16">
-      <div>
-        <h1 class="text-5xl font-black tracking-tight text-text-primary">Console</h1>
-        <p class="text-text-secondary text-lg mt-2 font-medium">Overview of your shop's recent activities.</p>
+    <!-- Main Content -->
+    <main class="flex-1 p-12 overflow-y-auto">
+      <div [ngSwitch]="currentTab">
+        <app-inventory *ngSwitchCase="'inventory'"></app-inventory>
+        <app-pos *ngSwitchCase="'pos'"></app-pos>
+        <app-orders-inbox *ngSwitchCase="'orders'"></app-orders-inbox>
+        <app-stock-movements *ngSwitchCase="'movements'"></app-stock-movements>
       </div>
-      <div class="w-fit">
-        <app-button>+ Add New Product</app-button>
-      </div>
-    </header>
+    </main>
+  </div>
+</ng-container>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-      <app-card [padding]="true">
-        <p class="text-text-muted font-bold text-xs uppercase tracking-widest mb-2">Total Sales</p>
-        <p class="text-4xl font-black text-text-primary tracking-tight">$12,840.00</p>
-        <div class="mt-4 flex items-center gap-2">
-          <app-badge variant="success">↑ 12.5%</app-badge>
-          <span class="text-text-muted text-xs font-medium italic">vs last month</span>
-        </div>
-      </app-card>
-      
-      <app-card [padding]="true">
-        <p class="text-text-muted font-bold text-xs uppercase tracking-widest mb-2">Active Orders</p>
-        <p class="text-4xl font-black text-text-primary tracking-tight">142</p>
-        <div class="mt-4 flex items-center gap-2">
-          <app-badge variant="info">Pending</app-badge>
-          <span class="text-text-muted text-xs font-medium italic">Processing now</span>
-        </div>
-      </app-card>
-
-      <app-card [padding]="true">
-        <p class="text-text-muted font-bold text-xs uppercase tracking-widest mb-2">Inventory</p>
-        <p class="text-4xl font-black text-text-primary tracking-tight">3</p>
-        <div class="mt-4 flex items-center gap-2">
-          <span class="text-red-500 font-black text-xs uppercase tracking-widest">Low Stock Alert</span>
-        </div>
-      </app-card>
-    </div>
-
-    <section>
-      <app-card [padding]="false">
-        <div class="px-10 py-8 border-b border-border flex justify-between items-center bg-card/30">
-          <h3 class="font-black text-2xl tracking-tight">Recent Orders</h3>
-          <app-badge variant="muted">Last 24 Hours</app-badge>
-        </div>
-        <div class="p-20 text-center flex flex-col items-center">
-          <div class="text-5xl mb-4 grayscale opacity-50">📤</div>
-          <p class="text-text-muted font-bold text-lg tracking-tight">Your order queue is currently empty.</p>
-          <p class="text-text-muted/60 text-sm mt-1 uppercase tracking-widest">New orders will show up here</p>
-        </div>
-      </app-card>
-    </section>
-  </main>
-</div>
+<ng-template #selector>
+  <app-shop-list></app-shop-list>
+</ng-template>
