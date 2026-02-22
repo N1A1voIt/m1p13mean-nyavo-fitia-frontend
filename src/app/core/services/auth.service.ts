@@ -32,23 +32,69 @@ export class AuthService {
     private apiService = inject(ApiService);
     private router = inject(Router);
 
-    private userSubject = new BehaviorSubject<UserProfile | null>(JSON.parse(localStorage.getItem('user') || 'null'));
+    private userSubject = new BehaviorSubject<UserProfile | null>(null);
     public user$ = this.userSubject.asObservable();
 
-    private idTokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('idToken'));
+    private idTokenSubject = new BehaviorSubject<string | null>(this.getValidToken());
     public idToken$ = this.idTokenSubject.asObservable();
 
+    private initialisedSubject = new BehaviorSubject<boolean>(false);
+    public initialised$ = this.initialisedSubject.asObservable();
+
     constructor() {
-        // Listen to Firebase Auth state
+        // We no longer call initialiseAuth() here to avoid Circular DI with HttpClient/Interceptors
+        // It will be called by APP_INITIALIZER or manually
+    }
+
+    /**
+     * Sanitizes token retrieval from localStorage.
+     */
+    private getValidToken(): string | null {
+        let token = localStorage.getItem('idToken');
+        if (!token || token === 'undefined' || token === 'null') return null;
+        return token.replace(/^"(.*)"$/, '$1');
+    }
+
+    /**
+     * Main initialisation logic. Returns a promise for APP_INITIALIZER.
+     */
+    public async initialiseAuth(): Promise<void> {
+        const token = this.getValidToken();
+
+        if (token) {
+            this.idTokenSubject.next(token);
+            try {
+                const res = await firstValueFrom(this.getMe());
+                if (res.success && res.data.user) {
+                    this.userSubject.next(res.data.user);
+                } else {
+                    this.logoutLocally();
+                }
+            } catch (err) {
+                console.warn('Auth initialisation failed. Token might be invalid.', err);
+                // Don't auto-logout on network error, only on 401/403 which errorInterceptor handles
+            }
+        }
+
+        // Keep Firebase state in sync
         user(this.auth).subscribe(async (fbUser) => {
             if (fbUser) {
-                const token = await fbUser.getIdToken();
-                this.idTokenSubject.next(token);
-                localStorage.setItem('idToken', token);
-            } else {
-                this.logoutLocally();
+                const newToken = await fbUser.getIdToken();
+                if (newToken && newToken !== this.currentToken) {
+                    this.saveToken(newToken);
+                    this.getMe().subscribe(res => {
+                        if (res.success) this.userSubject.next(res.data.user);
+                    });
+                }
             }
         });
+
+        this.initialisedSubject.next(true);
+    }
+
+    private saveToken(token: string) {
+        localStorage.setItem('idToken', token);
+        this.idTokenSubject.next(token);
     }
 
     get currentUserValue(): UserProfile | null {
@@ -59,25 +105,16 @@ export class AuthService {
         return this.idTokenSubject.value;
     }
 
-    /**
-     * Google Login Flow
-     */
     async loginWithGoogle() {
         try {
             const result = await signInWithPopup(this.auth, new GoogleAuthProvider());
             const token = await result.user.getIdToken();
 
             this.loginWithBackend({ idToken: token }).subscribe({
-                next: (response) => {
-                    this.handleAuthSuccess(response);
-                },
+                next: (response) => this.handleAuthSuccess(response),
                 error: (err) => {
-                    if (err.status === 404) {
-                        // User authenticated in Firebase but not in DB
-                        this.router.navigate(['/complete-profile']);
-                    } else {
-                        console.error('Backend Login Error', err);
-                    }
+                    if (err.status === 404) this.router.navigate(['/complete-profile']);
+                    else console.error('Backend Login Error', err);
                 }
             });
         } catch (error) {
@@ -85,29 +122,20 @@ export class AuthService {
         }
     }
 
-    /**
-     * Email/Password Login
-     */
     login(email: string, password: string): Observable<AuthResponse> {
         return this.apiService.post<AuthResponse>(`/auth/login`, { email, password })
-            .pipe(
-                tap(res => this.handleAuthSuccess(res))
-            );
+            .pipe(tap(res => this.handleAuthSuccess(res)));
     }
 
-    /**
-     * Registration
-     */
     register(userData: any): Observable<AuthResponse> {
         return this.apiService.post<AuthResponse>(`/auth/register`, userData)
-            .pipe(
-                tap(res => this.handleAuthSuccess(res))
-            );
+            .pipe(tap(res => this.handleAuthSuccess(res)));
     }
 
-    /**
-     * Sync social login or verify token
-     */
+    getMe(): Observable<any> {
+        return this.apiService.get<any>(`/auth/me`);
+    }
+
     private loginWithBackend(payload: { idToken: string }): Observable<AuthResponse> {
         return this.apiService.post<AuthResponse>(`/auth/login`, payload);
     }
@@ -115,11 +143,8 @@ export class AuthService {
     private handleAuthSuccess(response: AuthResponse) {
         if (response.success && response.data) {
             this.userSubject.next(response.data.user);
-            this.idTokenSubject.next(response.data.firebaseToken);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            localStorage.setItem('idToken', response.data.firebaseToken);
-
-            // Redirect based on role
+            const token = response.data.firebaseToken;
+            if (token) this.saveToken(token);
             this.redirectByRole(response.data.user.role);
         }
     }
@@ -133,15 +158,14 @@ export class AuthService {
         }
     }
 
-    private logoutLocally() {
+    public logoutLocally() {
         this.userSubject.next(null);
         this.idTokenSubject.next(null);
-        localStorage.removeItem('user');
         localStorage.removeItem('idToken');
     }
 
     async logout() {
-        await signOut(this.auth);
+        try { await signOut(this.auth); } catch (e) { }
         this.logoutLocally();
         this.router.navigate(['/login']);
     }
