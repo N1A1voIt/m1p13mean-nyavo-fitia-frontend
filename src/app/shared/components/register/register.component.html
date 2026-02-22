@@ -1,0 +1,85 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+  <app-card class="w-full max-w-lg" [padding]="true">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-text-primary tracking-tight">Create Account</h1>
+      <p class="text-text-secondary mt-2">Join our marketplace today</p>
+    </div>
+    
+    <div class="flex bg-background p-1 rounded-xl mb-8 border border-border">
+      <button 
+        [class]="'flex-1 py-2 text-sm font-semibold rounded-lg transition-all ' + (role === 'user' ? 'bg-accent text-white shadow-md' : 'text-text-secondary hover:text-text-primary')"
+        (click)="role = 'user'"
+      >
+        Customer
+      </button>
+      <button 
+        [class]="'flex-1 py-2 text-sm font-semibold rounded-lg transition-all ' + (role === 'shop' ? 'bg-accent text-white shadow-md' : 'text-text-secondary hover:text-text-primary')"
+        (click)="role = 'shop'"
+      >
+        Shop Owner
+      </button>
+    </div>
+
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <app-input
+          id="name"
+          label="Full Name"
+          placeholder="John Doe"
+          [(ngModel)]="userData.name"
+          name="name"
+          [required]="true"
+        ></app-input>
+        
+        <app-input
+          id="username"
+          label="Username"
+          placeholder="johndoe123"
+          [(ngModel)]="userData.username"
+          name="username"
+          [required]="true"
+        ></app-input>
+      </div>
+
+      <app-input
+        id="email"
+        label="Email"
+        type="email"
+        placeholder="name@example.com"
+        [(ngModel)]="userData.email"
+        name="email"
+        [required]="true"
+      ></app-input>
+      
+      <app-input
+        id="password"
+        label="Password"
+        type="password"
+        placeholder="••••••••"
+        [(ngModel)]="userData.password"
+        name="password"
+        [required]="true"
+      ></app-input>
+
+      <div class="transition-all duration-300" *ngIf="role === 'shop'">
+        <app-input
+          id="shopName"
+          label="Shop Name"
+          placeholder="My Awesome Store"
+          [(ngModel)]="userData.shopName"
+          name="shopName"
+          [required]="true"
+        ></app-input>
+      </div>
+      
+      <app-button type="submit" [loading]="loading">
+        Register
+      </app-button>
+    </form>
+    
+    <p class="mt-8 text-center text-text-secondary">
+      Already have an account? 
+      <a routerLink="/login" class="text-accent font-semibold hover:underline">Log in</a>
+    </p>
+  </app-card>
+</div>

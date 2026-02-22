@@ -1,0 +1,58 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+  <app-card class="w-full max-w-md" [padding]="true">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-text-primary tracking-tight">Almost There!</h1>
+      <p class="text-text-secondary mt-2">Just a few more details to complete your profile</p>
+    </div>
+    
+    <div class="flex bg-background p-1 rounded-xl mb-8 border border-border">
+      <button 
+        [class]="'flex-1 py-2 text-sm font-semibold rounded-lg transition-all ' + (role === 'user' ? 'bg-accent text-white shadow-md' : 'text-text-secondary hover:text-text-primary')"
+        (click)="role = 'user'"
+      >
+        Customer
+      </button>
+      <button 
+        [class]="'flex-1 py-2 text-sm font-semibold rounded-lg transition-all ' + (role === 'shop' ? 'bg-accent text-white shadow-md' : 'text-text-secondary hover:text-text-primary')"
+        (click)="role = 'shop'"
+      >
+        Shop Owner
+      </button>
+    </div>
+
+    <form (ngSubmit)="onComplete()" #completeForm="ngForm" class="space-y-6">
+      <app-input
+        id="name"
+        label="Full Name"
+        placeholder="John Doe"
+        [(ngModel)]="name"
+        name="name"
+        [required]="true"
+      ></app-input>
+
+      <app-input
+        id="username"
+        label="Pick a Username"
+        placeholder="unique_username"
+        [(ngModel)]="username"
+        name="username"
+        [required]="true"
+      ></app-input>
+
+      <div class="transition-all duration-300" *ngIf="role === 'shop'">
+        <app-input
+          id="shopName"
+          label="Shop Name"
+          placeholder="My Awesome Store"
+          [(ngModel)]="shopName"
+          name="shopName"
+          [required]="true"
+        ></app-input>
+      </div>
+      
+      <app-button type="submit" [loading]="loading" [disabled]="!completeForm.valid">
+        Finish Registration
+      </app-button>
+    </form>
+  </app-card>
+</div>
