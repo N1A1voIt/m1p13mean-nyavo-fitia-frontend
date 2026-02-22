@@ -14,7 +14,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
     switchMap(() => authService.user$),
     take(1),
     map(user => {
-      console.log(user);
+
       if (!user) {
         // No user found after initialization
         router.navigate(['/login']);
