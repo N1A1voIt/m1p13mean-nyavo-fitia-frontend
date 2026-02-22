@@ -55,11 +55,11 @@ export class CompleteProfileComponent implements OnInit {
     };
 
     this.authService.register(payload).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.loading = false;
         // Redirect handled by AuthService
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         console.error('Registration error', err);
         alert(err.error?.message || 'Profile completion failed');

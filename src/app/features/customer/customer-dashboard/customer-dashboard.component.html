@@ -1,5 +1,40 @@
-<div class="dashboard-container">
-  <h1>Customer Dashboard</h1>
-  <p>Welcome, {{ user?.name }}!</p>
-  <button (click)="logout()">Logout</button>
+<div class="min-h-screen bg-background text-text-primary">
+  <!-- Top Nav -->
+  <nav class="bg-sidebar border-b border-border px-8 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-accent rounded-lg"></div>
+      <span class="text-xl font-bold tracking-tight">Mall Customer</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <span class="text-text-secondary">Welcome, <span class="text-text-primary font-medium">{{ user?.name }}</span></span>
+      <button 
+        (click)="logout()" 
+        class="px-4 py-2 bg-transparent border border-border hover:bg-border rounded-lg text-sm font-semibold transition-all"
+      >
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <main class="p-8 max-w-7xl mx-auto">
+    <header class="mb-12">
+      <h2 class="text-4xl font-bold mb-2">Discover Shops</h2>
+      <p class="text-text-secondary">Find your favorite products in our marketplace.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Placeholder Cards -->
+      <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-card border border-border rounded-2xl p-6 hover:shadow-xl hover:shadow-accent/5 transition-all group cursor-pointer">
+        <div class="aspect-video bg-background rounded-xl mb-4 overflow-hidden">
+           <div class="w-full h-full bg-gradient-to-br from-sidebar to-card group-hover:scale-110 transition-transform duration-500"></div>
+        </div>
+        <h3 class="text-xl font-bold mb-1">Mall Store #{{i}}</h3>
+        <p class="text-text-secondary text-sm">Explore the latest collection of premium products.</p>
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-xs font-bold px-2 py-1 bg-accent/10 text-accent rounded uppercase tracking-wider">Open</span>
+          <span class="text-accent group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>

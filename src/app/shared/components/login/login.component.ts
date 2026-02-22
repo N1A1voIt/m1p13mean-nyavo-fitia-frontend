@@ -22,11 +22,11 @@ export class LoginComponent {
   async onLogin() {
     this.loading = true;
     this.authService.login(this.email, this.password).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.loading = false;
         // Redirect is handled by AuthService
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         alert(err.error?.message || 'Login failed');
       }

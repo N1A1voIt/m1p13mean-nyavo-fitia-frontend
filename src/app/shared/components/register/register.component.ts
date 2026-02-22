@@ -29,11 +29,11 @@ export class RegisterComponent {
     this.loading = true;
     const payload = { ...this.userData, role: this.role };
     this.authService.register(payload).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.loading = false;
         // Redirect is handled by AuthService
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         alert(err.error?.message || 'Registration failed');
       }
