@@ -1,11 +1,10 @@
 /* Reference: AI_CONTEXT_FRONTEND.md */
 import { Injectable, inject } from '@angular/core';
-import { Auth, GoogleAuthProvider, signInWithPopup, signOut, user, idToken } from '@angular/fire/auth';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Observable, firstValueFrom, of } from 'rxjs';
-import { tap, catchError, map } from 'rxjs/operators';
+import { Auth, GoogleAuthProvider, signInWithPopup, signOut, user } from '@angular/fire/auth';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ApiService } from './api.service';
 
 export interface UserProfile {
     id: string;
@@ -30,7 +29,7 @@ export interface AuthResponse {
 })
 export class AuthService {
     private auth = inject(Auth);
-    private http = inject(HttpClient);
+    private apiService = inject(ApiService);
     private router = inject(Router);
 
     private userSubject = new BehaviorSubject<UserProfile | null>(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -50,8 +49,6 @@ export class AuthService {
                 this.logoutLocally();
             }
         });
-
-        // Refresh token periodically? For now, we rely on Firebase SDK.
     }
 
     get currentUserValue(): UserProfile | null {
@@ -92,7 +89,7 @@ export class AuthService {
      * Email/Password Login
      */
     login(email: string, password: string): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password })
+        return this.apiService.post<AuthResponse>(`/auth/login`, { email, password })
             .pipe(
                 tap(res => this.handleAuthSuccess(res))
             );
@@ -102,7 +99,7 @@ export class AuthService {
      * Registration
      */
     register(userData: any): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, userData)
+        return this.apiService.post<AuthResponse>(`/auth/register`, userData)
             .pipe(
                 tap(res => this.handleAuthSuccess(res))
             );
@@ -112,7 +109,7 @@ export class AuthService {
      * Sync social login or verify token
      */
     private loginWithBackend(payload: { idToken: string }): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, payload);
+        return this.apiService.post<AuthResponse>(`/auth/login`, payload);
     }
 
     private handleAuthSuccess(response: AuthResponse) {
@@ -131,6 +128,7 @@ export class AuthService {
         switch (role) {
             case 2: this.router.navigate(['/admin']); break;
             case 1: this.router.navigate(['/shop']); break;
+            case 0: this.router.navigate(['/customer']); break;
             default: this.router.navigate(['/customer']); break;
         }
     }

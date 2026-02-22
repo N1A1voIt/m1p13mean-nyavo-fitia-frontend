@@ -1,0 +1,49 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1>Create Account</h1>
+    <p class="subtitle">Join our marketplace today</p>
+    
+    <div class="role-selector">
+      <button [class.active]="role === 'user'" (click)="role = 'user'">Customer</button>
+      <button [class.active]="role === 'shop'" (click)="role = 'shop'">Shop Owner</button>
+    </div>
+
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" [(ngModel)]="userData.name" name="name" required placeholder="John Doe">
+        </div>
+        
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" [(ngModel)]="userData.username" name="username" required placeholder="johndoe123">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" [(ngModel)]="userData.email" name="email" required placeholder="name@example.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" [(ngModel)]="userData.password" name="password" required placeholder="••••••••">
+      </div>
+
+      <div class="form-group animate-fade" *ngIf="role === 'shop'">
+        <label for="shopName">Shop Name</label>
+        <input type="text" id="shopName" [(ngModel)]="userData.shopName" name="shopName" required placeholder="My Awesome Store">
+      </div>
+      
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        <span *ngIf="!loading">Register</span>
+        <span *ngIf="loading" class="loader"></span>
+      </button>
+    </form>
+    
+    <p class="footer-text">
+      Already have an account? <a routerLink="/login">Log in</a>
+    </p>
+  </div>
+</div>

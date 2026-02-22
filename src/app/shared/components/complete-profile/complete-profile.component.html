@@ -1,0 +1,33 @@
+<div class="complete-container">
+  <div class="complete-card">
+    <h1>Almost There!</h1>
+    <p class="subtitle">Just a few more details to complete your profile</p>
+    
+    <div class="role-selector">
+      <button [class.active]="role === 'user'" (click)="role = 'user'">Customer</button>
+      <button [class.active]="role === 'shop'" (click)="role = 'shop'">Shop Owner</button>
+    </div>
+
+    <form (ngSubmit)="onComplete()" #completeForm="ngForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" [(ngModel)]="name" name="name" required placeholder="John Doe">
+      </div>
+
+      <div class="form-group">
+        <label for="username">Pick a Username</label>
+        <input type="text" id="username" [(ngModel)]="username" name="username" required placeholder="unique_username">
+      </div>
+
+      <div class="form-group animate-fade" *ngIf="role === 'shop'">
+        <label for="shopName">Shop Name</label>
+        <input type="text" id="shopName" [(ngModel)]="shopName" name="shopName" required placeholder="My Awesome Store">
+      </div>
+      
+      <button type="submit" class="btn-primary" [disabled]="loading || !completeForm.valid">
+        <span *ngIf="!loading">Finish Registration</span>
+        <span *ngIf="loading" class="loader"></span>
+      </button>
+    </form>
+  </div>
+</div>

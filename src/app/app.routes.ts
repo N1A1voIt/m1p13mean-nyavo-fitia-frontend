@@ -23,13 +23,13 @@ export const routes: Routes = [
   },
   {
     path: 'shop',
-    loadComponent: () => import('./shared/components/login/login.component').then(m => m.LoginComponent), // Placeholder
+    loadComponent: () => import('./features/shop/shop-dashboard/shop-dashboard.component').then(m => m.ShopDashboardComponent),
     canActivate: [roleGuard],
     data: { role: 'SHOP' }
   },
   {
     path: 'customer',
-    loadComponent: () => import('./shared/components/login/login.component').then(m => m.LoginComponent), // Placeholder
+    loadComponent: () => import('./features/customer/customer-dashboard/customer-dashboard.component').then(m => m.CustomerDashboardComponent),
     canActivate: [roleGuard],
     data: { role: 'CUSTOMER' }
   },

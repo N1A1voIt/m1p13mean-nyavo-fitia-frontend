@@ -1,0 +1,36 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Log in to your account to continue</p>
+    
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" [(ngModel)]="email" name="email" required placeholder="name@example.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" [(ngModel)]="password" name="password" required placeholder="••••••••">
+      </div>
+      
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        <span *ngIf="!loading">Log In</span>
+        <span *ngIf="loading" class="loader"></span>
+      </button>
+    </form>
+    
+    <div class="divider">
+      <span>OR</span>
+    </div>
+    
+    <button (click)="onGoogleLogin()" class="btn-google">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Sign In with Google
+    </button>
+    
+    <p class="footer-text">
+      Don't have an account? <a routerLink="/register">Register here</a>
+    </p>
+  </div>
+</div>
