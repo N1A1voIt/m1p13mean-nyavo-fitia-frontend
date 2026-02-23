@@ -58,6 +58,12 @@ export const routes: Routes = [
     data: { role: 'CUSTOMER' }
   },
   {
+    path: 'mall-plan',
+    loadComponent: () => import('./features/customer/mall-plan/mall-plan.component').then(m => m.MallPlanComponent),
+    canActivate: [],
+    data: { role: 'CUSTOMER' }
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)

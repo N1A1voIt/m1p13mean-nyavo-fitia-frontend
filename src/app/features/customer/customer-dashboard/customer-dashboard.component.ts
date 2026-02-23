@@ -4,11 +4,12 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ButtonComponent } from '../../../shared/components/ui/button/button.component';
 import { CardComponent } from '../../../shared/components/ui/card/card.component';
 import { BadgeComponent } from '../../../shared/components/ui/badge/badge.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-customer-dashboard',
     standalone: true,
-    imports: [CommonModule, ButtonComponent, CardComponent, BadgeComponent],
+    imports: [CommonModule, ButtonComponent, CardComponent, BadgeComponent, RouterModule],
     templateUrl: './customer-dashboard.component.html',
     styleUrl: './customer-dashboard.component.css'
 })

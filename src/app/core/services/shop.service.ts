@@ -52,6 +52,10 @@ export class ShopService {
         return this.apiService.get<any>('/shop/list');
     }
 
+    getAllShops(): Observable<any> {
+        return this.apiService.get<any>('/shop/all');
+    }
+
     createShop(shopData: { name: string, boxId?: string }): Observable<any> {
         return this.apiService.post<any>('/shop', shopData);
     }
