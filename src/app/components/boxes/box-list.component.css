@@ -1,0 +1,4 @@
+/* Box List styles moved to Tailwind classes */
+:host {
+    display: block;
+}

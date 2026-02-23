@@ -1,0 +1,151 @@
+<div class="flex justify-between items-center mb-8">
+  <h1 class="text-4xl font-bold font-display text-gray-900 tracking-tight">Mall Boxes</h1>
+  <button 
+    (click)="openNewBoxModal()"
+    class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:shadow-indigo-200 transition-all active:scale-95">
+    + New Box
+  </button>
+</div>
+
+<!-- Main Grid and Cards as before ... -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+  <div class="glass p-6 bg-white border-gray-100 shadow-sm flex items-center gap-4">
+    <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-2xl">📦</div>
+    <div>
+      <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Total Inventory</p>
+      <p class="text-2xl font-black font-display text-gray-900">{{ boxes.length }}</p>
+    </div>
+  </div>
+  <div class="glass p-6 bg-white border-gray-100 shadow-sm flex items-center gap-4 border-l-4 border-green-500">
+    <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-2xl">🤝</div>
+    <div>
+      <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Occupied</p>
+      <p class="text-2xl font-black font-display text-gray-900">{{ occupiedCount }}</p>
+    </div>
+  </div>
+  <div class="glass p-6 bg-white border-gray-100 shadow-sm flex items-center gap-4 border-l-4 border-blue-500">
+    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl">✨</div>
+    <div>
+      <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Available</p>
+      <p class="text-2xl font-black font-display text-gray-900">{{ availableCount }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+  <div *ngFor="let box of boxes" class="group relative glass bg-white p-8 border-gray-100 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 animate-fade">
+    <div 
+      class="absolute top-6 right-6 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
+      [ngClass]="{
+        'bg-green-100 text-green-700': box.status === 'Libre',
+        'bg-red-100 text-red-700': box.status === 'Occupé',
+        'bg-amber-100 text-amber-700': box.status === 'En travaux'
+      }"
+    >
+      {{ box.status }}
+    </div>
+    
+    <div class="mb-6">
+      <h3 class="text-2xl font-black font-display text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">Box {{ box.boxNumber }}</h3>
+      <p class="text-sm text-gray-400 font-medium">{{ box.location.zone }} • Floor {{ box.location.floor }}</p>
+    </div>
+    
+    <div class="py-6 border-y border-gray-50 mb-6 min-h-[80px]">
+      <div *ngIf="box.currentTenant" class="animate-fade">
+         <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Current Tenant</p>
+         <div class="flex items-center gap-2">
+           <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+           <p class="font-bold text-gray-800">Boutique #{{ box.currentTenant.toString().slice(-4) }}</p>
+         </div>
+      </div>
+      <div *ngIf="!box.currentTenant" class="flex items-center justify-center h-full">
+         <p class="text-xs italic text-gray-300">Ready for occupancy</p>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Monthly Rent</p>
+        <p class="text-xl font-black font-display text-gray-900">{{ box.pricePerMonth | currency:'MGA':'symbol':'1.0-0' }}</p>
+      </div>
+      <button 
+        (click)="viewBoxDetails(box)"
+        class="w-12 h-12 rounded-2xl bg-gray-50 text-gray-400 hover:bg-indigo-600 hover:text-white transition-all duration-300">
+        →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Register New Box Modal -->
+<div *ngIf="isModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-up border border-white">
+    <div class="p-8 border-b border-gray-50 flex justify-between items-center">
+      <div>
+        <h2 class="text-2xl font-black font-display text-gray-900">Register New Box</h2>
+        <p class="text-sm text-gray-400">Add a new commercial unit to the mall directory.</p>
+      </div>
+      <button (click)="closeModal()" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gray-100 transition-colors">✕</button>
+    </div>
+
+    <form (ngSubmit)="saveBox()" #boxForm="ngForm" class="p-8 space-y-6">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Box Number</label>
+          <input 
+            type="text" name="boxNumber" [(ngModel)]="newBox.boxNumber" required
+            placeholder="e.g., A-102"
+            class="w-full px-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none font-bold text-gray-900"
+          >
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Type</label>
+          <select 
+            name="type" [(ngModel)]="newBox.type"
+            class="w-full px-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none font-bold text-gray-900"
+          >
+            <option value="Boutique">Boutique</option>
+            <option value="Kiosque">Kiosque</option>
+            <option value="FoodCourt">Food Court</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Floor</label>
+          <input 
+            type="number" name="floor" [(ngModel)]="newBox.location.floor"
+            class="w-full px-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none font-bold text-gray-900"
+          >
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Zone / Area</label>
+          <input 
+            type="text" name="zone" [(ngModel)]="newBox.location.zone" required
+            placeholder="e.g., Aile Nord"
+            class="w-full px-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none font-bold text-gray-900"
+          >
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Monthly Rent (MGA)</label>
+        <input 
+          type="number" name="price" [(ngModel)]="newBox.pricePerMonth" required
+          class="w-full px-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none font-extrabold text-indigo-600 text-xl"
+        >
+      </div>
+
+      <div class="pt-4">
+        <button 
+          type="submit" 
+          [disabled]="!boxForm.form.valid"
+          class="w-full py-4 bg-gray-900 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-indigo-600 transition-all shadow-xl shadow-gray-200 disabled:opacity-50 disabled:bg-gray-400"
+        >
+          Confirm Registration
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
