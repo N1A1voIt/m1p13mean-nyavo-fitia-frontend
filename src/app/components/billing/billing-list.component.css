@@ -1,0 +1,4 @@
+/* Billing List styles moved to Tailwind classes */
+:host {
+    display: block;
+}
