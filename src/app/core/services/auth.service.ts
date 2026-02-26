@@ -105,20 +105,17 @@ export class AuthService {
         return this.idTokenSubject.value;
     }
 
-    async loginWithGoogle() {
+    async loginWithGoogle(): Promise<void> {
         try {
             const result = await signInWithPopup(this.auth, new GoogleAuthProvider());
             const token = await result.user.getIdToken();
 
-            this.loginWithBackend({ idToken: token }).subscribe({
-                next: (response) => this.handleAuthSuccess(response),
-                error: (err) => {
-                    if (err.status === 404) this.router.navigate(['/complete-profile']);
-                    else console.error('Backend Login Error', err);
-                }
-            });
-        } catch (error) {
-            console.error('Google Auth Error', error);
+            await firstValueFrom(this.loginWithBackend({ idToken: token }).pipe(
+                tap((response) => this.handleAuthSuccess(response))
+            ));
+        } catch (error: any) {
+            if (error?.status === 404) this.router.navigate(['/complete-profile']);
+            else console.error('Google Auth Error', error);
         }
     }
 

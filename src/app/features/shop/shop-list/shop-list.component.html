@@ -42,10 +42,10 @@
             <p class="text-warning text-sm font-bold mb-3">⚠️ Pending Box Assignment</p>
             <app-button 
               (onClick)="requestBox(shop, $event)" 
-              [disabled]="requestStatuses[shop._id] === 'PENDING' || requestStatuses[shop._id] === 'SENT'"
+              [disabled]="!!requestStatuses[shop._id]"
               class="w-full"
             >
-              {{ requestStatuses[shop._id] === 'SENT' ? 'Request Sent' : (requestStatuses[shop._id] === 'PENDING' ? 'Processing...' : 'Request Box to Admin') }}
+              {{ requestStatuses[shop._id] || 'Request Box to Admin' }}
             </app-button>
           </div>
         </div>

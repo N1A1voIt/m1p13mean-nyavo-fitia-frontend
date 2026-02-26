@@ -29,8 +29,8 @@ export class AdminDashboardComponent implements OnInit {
 
   loadRequests() {
     this.loading = true;
-    this.shopService.getBoxRequests().subscribe({
-      next: (res) => {
+    this.shopService.getAllBoxRequests().subscribe({
+      next: (res: any) => {
         this.requests = res.data.requests;
         this.loading = false;
       },
@@ -46,6 +46,9 @@ export class AdminDashboardComponent implements OnInit {
       next: () => {
         this.loadRequests();
         delete this.boxAssignment[requestId];
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Failed to assign box');
       }
     });
   }

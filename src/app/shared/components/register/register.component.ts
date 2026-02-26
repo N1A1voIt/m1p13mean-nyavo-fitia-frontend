@@ -30,7 +30,8 @@ export class RegisterComponent {
 
   async onRegister() {
     this.loading = true;
-    const payload = { ...this.userData, role: this.role };
+    const roleMap: { [key: string]: number } = { 'user': 0, 'shop': 1 };
+    const payload = { ...this.userData, role: roleMap[this.role] };
     this.authService.register(payload).subscribe({
       next: (res: any) => {
         this.loading = false;

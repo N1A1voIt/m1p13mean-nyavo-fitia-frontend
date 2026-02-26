@@ -6,8 +6,8 @@ export const shopInterceptor: HttpInterceptorFn = (req, next) => {
     const shopService = inject(ShopService);
     const shopId = shopService.activeShopId;
 
-    // Only attach header if we have a shopId and it's a shop API call
-    if (shopId && req.url.includes('/shop')) {
+    // Only attach header if we have a shopId and it's a shop-specific API call
+    if (shopId && /\/shop(\/|$)/.test(req.url)) {
         req = req.clone({
             setHeaders: {
                 'X-Shop-Id': shopId

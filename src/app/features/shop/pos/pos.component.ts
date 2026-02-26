@@ -17,7 +17,7 @@ export class PosComponent implements OnInit {
 
     products: Product[] = [];
     loading = true;
-    processingSale = false;
+    processingProductId: string | null = null;
 
     ngOnInit() {
         this.loadProducts();
@@ -28,14 +28,15 @@ export class PosComponent implements OnInit {
             next: (res) => {
                 this.products = res.data;
                 this.loading = false;
-            }
+            },
+            error: () => this.loading = false
         });
     }
 
     quickSale(product: Product) {
-        if (this.processingSale || (product.quantity || 0) <= 0) return;
+        if (this.processingProductId || (product.quantity || 0) <= 0) return;
 
-        this.processingSale = true;
+        this.processingProductId = product._id!;
         const saleItem = {
             productId: product._id!,
             quantity: 1,
@@ -46,11 +47,11 @@ export class PosComponent implements OnInit {
             next: () => {
                 // Optimistic update
                 product.quantity = (product.quantity || 0) - 1;
-                this.processingSale = false;
+                this.processingProductId = null;
             },
             error: (err) => {
                 alert(err.error?.message || 'Sale failed');
-                this.processingSale = false;
+                this.processingProductId = null;
             }
         });
     }

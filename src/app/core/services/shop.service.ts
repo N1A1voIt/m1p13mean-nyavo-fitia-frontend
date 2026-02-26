@@ -10,6 +10,14 @@ export interface Shop {
     boxId?: string;
 }
 
+export interface BoxRequest {
+    _id: string;
+    shop: string | Shop;
+    status: 'PENDING' | 'ASSIGNED' | 'REJECTED';
+    assignedBox?: string;
+    createdAt?: string;
+}
+
 export interface Product {
     _id?: string;
     name: string;
@@ -62,6 +70,29 @@ export class ShopService {
 
     assignBox(shopId: string, boxId: string): Observable<any> {
         return this.apiService.patch<any>(`/shop/${shopId}/box`, { boxId });
+    }
+
+    /**
+     * Box Request Management
+     */
+    requestBox(shopId: string): Observable<any> {
+        return this.apiService.post('/box-requests', { shop: shopId });
+    }
+
+    getBoxRequest(shopId: string): Observable<any> {
+        return this.apiService.get(`/box-requests/shop/${shopId}`);
+    }
+
+    getMyBoxRequests(): Observable<{ data: { requests: BoxRequest[] } }> {
+        return this.apiService.get('/box-requests/mine');
+    }
+
+    getAllBoxRequests(): Observable<{ data: { requests: any[] } }> {
+        return this.apiService.get('/box-requests');
+    }
+
+    assignBoxToRequest(requestId: string, boxId: string): Observable<any> {
+        return this.apiService.patch(`/box-requests/${requestId}/assign`, { assignedBox: boxId });
     }
 
     selectShop(shop: Shop) {
@@ -126,20 +157,5 @@ export class ShopService {
      */
     getMovements(): Observable<any> {
         return this.apiService.get<any>('/shop/movements');
-    }
-
-    /**
-     * Box Requests
-     */
-    requestBox(shopId: string): Observable<any> {
-        return this.apiService.post<any>('/box-requests', { shop: shopId });
-    }
-
-    getBoxRequests(page: number = 1, limit: number = 10): Observable<any> {
-        return this.apiService.get<any>('/box-requests', { page, limit });
-    }
-
-    assignBoxToRequest(requestId: string, boxId: string): Observable<any> {
-        return this.apiService.patch<any>(`/box-requests/${requestId}/assign`, { assignedBox: boxId });
     }
 }

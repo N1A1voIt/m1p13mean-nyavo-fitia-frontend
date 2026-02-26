@@ -49,6 +49,9 @@ export class InventoryComponent implements OnInit {
                 this.loadProducts();
                 this.showAddForm = false;
                 this.newProduct = { name: '', price: 0, quantity: 0, category: '' };
+            },
+            error: (err) => {
+                alert(err.error?.message || 'Failed to add product');
             }
         });
     }
@@ -60,6 +63,9 @@ export class InventoryComponent implements OnInit {
         this.shopService.updateProduct(product._id!, { quantity: newQty }).subscribe({
             next: (res) => {
                 product.quantity = res.data.quantity;
+            },
+            error: (err) => {
+                alert(err.error?.message || 'Failed to update stock');
             }
         });
     }

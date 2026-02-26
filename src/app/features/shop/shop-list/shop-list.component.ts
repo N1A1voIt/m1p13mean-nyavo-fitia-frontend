@@ -28,6 +28,7 @@ export class ShopListComponent implements OnInit {
 
     ngOnInit() {
         this.loadShops();
+        this.loadMyRequests();
     }
 
     loadShops() {
@@ -38,6 +39,18 @@ export class ShopListComponent implements OnInit {
                 this.loading = false;
             },
             error: () => this.loading = false
+        });
+    }
+
+    loadMyRequests() {
+        this.shopService.getMyBoxRequests().subscribe({
+            next: (res) => {
+                const requests = res.data.requests;
+                requests.forEach((req: any) => {
+                    const shopId = typeof req.shop === 'string' ? req.shop : req.shop._id;
+                    this.requestStatuses[shopId] = req.status;
+                });
+            }
         });
     }
 

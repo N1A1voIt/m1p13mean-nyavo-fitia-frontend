@@ -37,6 +37,9 @@ export class OrdersInboxComponent implements OnInit {
             next: () => {
                 const order = this.orders.find(o => o._id === orderId);
                 if (order) order.status = 'PICKED_UP';
+            },
+            error: (err) => {
+                alert(err.error?.message || 'Failed to update order');
             }
         });
     }

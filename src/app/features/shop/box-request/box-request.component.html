@@ -12,9 +12,23 @@
           <p class="font-bold text-text-primary">{{ shop.name }}</p>
         </div>
 
-        <app-button (onClick)="submitRequest()" [disabled]="loading" class="w-full">
-          {{ loading ? 'Sending Request...' : 'Send Box Request' }}
-        </app-button>
+        <div *ngIf="existingRequest; else noRequest" class="space-y-4">
+          <div class="p-4 bg-accent/10 text-accent rounded-xl text-center border border-accent/20">
+            <p class="font-bold">Request Status: {{ existingRequest.status }}</p>
+            <p *ngIf="existingRequest.status === 'PENDING'" class="text-sm mt-1">Admin will soon assign a box to your shop.</p>
+            <p *ngIf="existingRequest.status === 'ASSIGNED'" class="text-sm mt-1">Box ID: {{ existingRequest.assignedBox }}</p>
+          </div>
+          
+          <app-button *ngIf="existingRequest.status === 'REJECTED'" (onClick)="submitRequest()" [disabled]="loading" class="w-full">
+            Retry Request
+          </app-button>
+        </div>
+
+        <ng-template #noRequest>
+          <app-button (onClick)="submitRequest()" [disabled]="loading" class="w-full">
+            {{ loading ? 'Sending Request...' : 'Send Box Request' }}
+          </app-button>
+        </ng-template>
       </ng-container>
 
       <ng-template #noShop>

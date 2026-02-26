@@ -30,8 +30,7 @@ export const routes: Routes = [
           const user = authService.currentUserValue;
           if (!user) return router.parseUrl('/login');
           if (user.role !== undefined && user.role !== null) {
-            router.navigate(['/']);
-            return false;
+            return router.parseUrl('/');
           }
           return true;
         })
@@ -60,7 +59,7 @@ export const routes: Routes = [
   {
     path: 'mall-plan',
     loadComponent: () => import('./features/customer/mall-plan/mall-plan.component').then(m => m.MallPlanComponent),
-    canActivate: [],
+    canActivate: [roleGuard],
     data: { role: 'CUSTOMER' }
   },
   {
