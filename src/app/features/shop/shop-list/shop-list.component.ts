@@ -48,13 +48,28 @@ export class ShopListComponent implements OnInit {
     onCreateShop() {
         if (!this.newShop.name) return;
 
-        this.shopService.createShop(this.newShop).subscribe({
+        this.shopService.createShop({ name: this.newShop.name }).subscribe({
             next: (res) => {
                 this.shops.push(res.data);
                 this.showCreateForm = false;
                 this.newShop = { name: '', boxId: '' };
-                // Automatically select the newly created shop
-                this.onSelectShop(res.data);
+            }
+        });
+    }
+
+    requestStatuses: { [shopId: string]: string } = {};
+
+    requestBox(shop: Shop, event: Event) {
+        event.stopPropagation();
+        this.requestStatuses[shop._id] = 'PENDING';
+        
+        this.shopService.requestBox(shop._id).subscribe({
+            next: () => {
+                this.requestStatuses[shop._id] = 'SENT';
+            },
+            error: (err) => {
+                this.requestStatuses[shop._id] = '';
+                alert(err?.error?.error || 'Failed to send request');
             }
         });
     }

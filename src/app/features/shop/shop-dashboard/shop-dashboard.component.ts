@@ -10,6 +10,7 @@ import { PosComponent } from '../pos/pos.component';
 import { OrdersInboxComponent } from '../orders-inbox/orders-inbox.component';
 import { ShopListComponent } from '../shop-list/shop-list.component';
 import { StockMovementsComponent } from '../stock-movements/stock-movements.component';
+import { BoxRequestComponent } from '../box-request/box-request.component';
 
 @Component({
     selector: 'app-shop-dashboard',
@@ -23,7 +24,8 @@ import { StockMovementsComponent } from '../stock-movements/stock-movements.comp
         PosComponent,
         OrdersInboxComponent,
         ShopListComponent,
-        StockMovementsComponent
+        StockMovementsComponent,
+        BoxRequestComponent
     ],
     templateUrl: './shop-dashboard.component.html',
     styleUrl: './shop-dashboard.component.css'
@@ -35,9 +37,9 @@ export class ShopDashboardComponent {
     user = this.authService.currentUserValue;
     selectedShop$ = this.shopService.selectedShop$;
 
-    currentTab: 'inventory' | 'pos' | 'orders' | 'movements' = 'inventory';
+    currentTab: 'inventory' | 'pos' | 'orders' | 'movements' | 'box-request' = 'inventory';
 
-    setTab(tab: 'inventory' | 'pos' | 'orders' | 'movements') {
+    setTab(tab: 'inventory' | 'pos' | 'orders' | 'movements' | 'box-request') {
         this.currentTab = tab;
     }
 

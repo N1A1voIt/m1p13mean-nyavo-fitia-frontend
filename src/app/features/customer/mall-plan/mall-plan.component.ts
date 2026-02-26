@@ -36,6 +36,7 @@ export class MallPlanComponent implements OnInit {
     ];
 
     ngOnInit() {
+        this.loadBoxes();
         this.shopService.getAllShops().subscribe({
             next: (response) => {
                 this.shops = response.data || response;
@@ -51,38 +52,88 @@ export class MallPlanComponent implements OnInit {
 
     offsetX = 0;
     offsetY = 0;
-    private isDragging = false;
-    private startX = 0;
-    private startY = 0;
+    private isDraggingMap = false;
+    private startMapX = 0;
+    private startMapY = 0;
 
+    // Box dragging state
+    draggingBoxId: string | null = null;
+    draggingBoxIndex: number = -1;
+    private startBoxX = 0;
+    private startBoxY = 0;
+    private originalBoxX = 0;
+    private originalBoxY = 0;
 
-    onBoxClick(boxId: string) {
-        if (this.isDragging) return;
-        this.selectedBoxId = boxId;
-        this.selectedShop = this.shopMap[boxId] || null;
+    onBoxClick(box: any, event: MouseEvent) {
+        // Prevent click if we were dragging the box or if clicking on empty box
+        if (this.draggingBoxId || !this.isOccupied(box.id)) return;
+        event.stopPropagation(); // prevent map drag start
+        this.selectedBoxId = box.id;
+        this.selectedShop = this.shopMap[box.id] || null;
     }
 
-    startDrag(event: MouseEvent) {
-        this.isDragging = true;
-        this.startX = event.clientX - this.offsetX;
-        this.startY = event.clientY - this.offsetY;
+    startMapDrag(event: MouseEvent) {
+        // only start map drag if we aren't dragging a box
+        if (this.draggingBoxId) return;
+        this.isDraggingMap = true;
+        this.startMapX = event.clientX - this.offsetX;
+        this.startMapY = event.clientY - this.offsetY;
+    }
+
+    startBoxDrag(event: MouseEvent, box: any, index: number) {
+        if (!this.isOccupied(box.id)) return;
+        event.stopPropagation(); // Prevent map drag
+        this.draggingBoxId = box.id;
+        this.draggingBoxIndex = index;
+        this.startBoxX = event.clientX;
+        this.startBoxY = event.clientY;
+        this.originalBoxX = box.x;
+        this.originalBoxY = box.y;
     }
 
     onDrag(event: MouseEvent) {
-        if (!this.isDragging) return;
-        this.offsetX = event.clientX - this.startX;
-        this.offsetY = event.clientY - this.startY;
+        if (this.isDraggingMap) {
+            this.offsetX = event.clientX - this.startMapX;
+            this.offsetY = event.clientY - this.startMapY;
+        } else if (this.draggingBoxId && this.draggingBoxIndex !== -1) {
+            const dx = event.clientX - this.startBoxX;
+            const dy = event.clientY - this.startBoxY;
+            // Update box position temporarily
+            // Simple approach: we scale the dx/dy because SVG might be scaled by browser, 
+            // but for a simple interactive pan/zoom we can assume 1:1 roughly or add a multiplier.
+            // A more exact way requires CTM math, but this gives a quick drag effect.
+            this.boxes[this.draggingBoxIndex].x = this.originalBoxX + dx;
+            this.boxes[this.draggingBoxIndex].y = this.originalBoxY + dy;
+        }
     }
 
     stopDrag() {
-        this.isDragging = false;
+        this.isDraggingMap = false;
+        if (this.draggingBoxId) {
+            // Save layout to local storage so persistence is kept for user
+            this.saveBoxes();
+
+            this.draggingBoxId = null;
+            this.draggingBoxIndex = -1;
+        }
+    }
+
+    saveBoxes() {
+        localStorage.setItem('mall_boxes_layout', JSON.stringify(this.boxes));
+    }
+
+    loadBoxes() {
+        const saved = localStorage.getItem('mall_boxes_layout');
+        if (saved) {
+            try {
+                this.boxes = JSON.parse(saved);
+            } catch (e) {
+                console.error('Failed to parse saved layout', e);
+            }
+        }
     }
 
     isOccupied(boxId: string): boolean {
         return !!this.shopMap[boxId];
-    }
-
-    getShopName(boxId: string): string {
-        return this.shopMap[boxId]?.name || 'Available Slot';
     }
 }

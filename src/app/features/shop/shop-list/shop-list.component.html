@@ -15,7 +15,6 @@
       <h3 class="text-2xl font-black mb-6">New Shop Setup</h3>
       <form (ngSubmit)="onCreateShop()" class="space-y-6">
         <app-input label="Shop Name" [(ngModel)]="newShop.name" name="name" placeholder="E.g. Downtown Coffee" [required]="true"></app-input>
-        <app-input label="Box ID (Optional)" [(ngModel)]="newShop.boxId" name="boxId" placeholder="E.g. BOX-101"></app-input>
         <div class="flex gap-4">
           <app-button type="submit" class="flex-1">Create Shop</app-button>
           <app-button variant="outline" (onClick)="showCreateForm = false">Cancel</app-button>
@@ -28,25 +27,40 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8" *ngIf="!loading">
     <app-card 
       *ngFor="let shop of shops" 
-      [hoverable]="true" 
+      [hoverable]="!!shop.boxId" 
       [padding]="true" 
-      (click)="onSelectShop(shop)"
-      class="group cursor-pointer border-2 border-transparent hover:border-accent/30 transition-all"
+      (click)="shop.boxId ? onSelectShop(shop) : null"
+      class="group transition-all border-2 border-transparent"
+      [ngClass]="shop.boxId ? 'cursor-pointer hover:border-accent/30' : 'opacity-60 grayscale cursor-not-allowed'"
     >
       <div class="flex justify-between items-start">
         <div>
-          <app-badge variant="info" class="mb-4">{{ shop.shopRef }}</app-badge>
-          <h2 class="text-3xl font-black text-text-primary group-hover:text-accent transition-colors">{{ shop.name }}</h2>
+          <app-badge [variant]="shop.boxId ? 'info' : 'warning'" class="mb-4">{{ shop.shopRef }}</app-badge>
+          <h2 class="text-3xl font-black transition-colors" [ngClass]="shop.boxId ? 'text-text-primary group-hover:text-accent' : 'text-text-secondary'">{{ shop.name }}</h2>
           <p class="text-text-muted mt-2 font-medium" *ngIf="shop.boxId">📍 Box: {{ shop.boxId }}</p>
+          <div *ngIf="!shop.boxId" class="mt-4" (click)="$event.stopPropagation()">
+            <p class="text-warning text-sm font-bold mb-3">⚠️ Pending Box Assignment</p>
+            <app-button 
+              (onClick)="requestBox(shop, $event)" 
+              [disabled]="requestStatuses[shop._id] === 'PENDING' || requestStatuses[shop._id] === 'SENT'"
+              class="w-full"
+            >
+              {{ requestStatuses[shop._id] === 'SENT' ? 'Request Sent' : (requestStatuses[shop._id] === 'PENDING' ? 'Processing...' : 'Request Box to Admin') }}
+            </app-button>
+          </div>
         </div>
-        <div class="w-12 h-12 rounded-full bg-accent/5 flex items-center justify-center text-accent text-xl group-hover:scale-110 transition-transform">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-transform"
+             [ngClass]="shop.boxId ? 'bg-accent/5 text-accent group-hover:scale-110' : 'bg-sidebar text-text-muted'">
           🏬
         </div>
       </div>
       
       <div class="mt-8 pt-6 border-t border-border flex justify-between items-center">
         <span class="text-xs font-black uppercase tracking-widest text-text-muted">Manager Mode</span>
-        <span class="text-accent font-bold group-hover:translate-x-1 transition-transform">Enter Dashboard →</span>
+        <span class="font-bold transition-transform"
+              [ngClass]="shop.boxId ? 'text-accent group-hover:translate-x-1' : 'text-text-muted/50'">
+          {{ shop.boxId ? 'Enter Dashboard →' : 'Requires Placement' }}
+        </span>
       </div>
     </app-card>
 

@@ -9,5 +9,5 @@ import { CommonModule } from '@angular/common';
     styleUrl: './badge.component.css'
 })
 export class BadgeComponent {
-    @Input() variant: 'success' | 'info' | 'muted' = 'success';
+    @Input() variant: 'success' | 'info' | 'muted' | 'warning' | 'danger' = 'success';
 }

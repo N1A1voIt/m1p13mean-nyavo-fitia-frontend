@@ -60,6 +60,10 @@ export class ShopService {
         return this.apiService.post<any>('/shop', shopData);
     }
 
+    assignBox(shopId: string, boxId: string): Observable<any> {
+        return this.apiService.patch<any>(`/shop/${shopId}/box`, { boxId });
+    }
+
     selectShop(shop: Shop) {
         localStorage.setItem('activeShop', JSON.stringify(shop));
         this.selectedShopSubject.next(shop);
@@ -122,5 +126,20 @@ export class ShopService {
      */
     getMovements(): Observable<any> {
         return this.apiService.get<any>('/shop/movements');
+    }
+
+    /**
+     * Box Requests
+     */
+    requestBox(shopId: string): Observable<any> {
+        return this.apiService.post<any>('/box-requests', { shop: shopId });
+    }
+
+    getBoxRequests(page: number = 1, limit: number = 10): Observable<any> {
+        return this.apiService.get<any>('/box-requests', { page, limit });
+    }
+
+    assignBoxToRequest(requestId: string, boxId: string): Observable<any> {
+        return this.apiService.patch<any>(`/box-requests/${requestId}/assign`, { assignedBox: boxId });
     }
 }

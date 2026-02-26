@@ -39,6 +39,13 @@
         >
           <span class="text-lg">📜</span> Stock History
         </button>
+        <button 
+          (click)="setTab('box-request')" 
+          class="w-full flex items-center gap-3 px-4 py-3 transition-all rounded-xl font-bold"
+          [ngClass]="currentTab === 'box-request' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-card'"
+        >
+          <span class="text-lg">📦</span> Request a Box
+        </button>
       </nav>
 
       <div class="pt-8 border-t border-border mt-auto space-y-4">
@@ -72,6 +79,7 @@
         <app-pos *ngSwitchCase="'pos'"></app-pos>
         <app-orders-inbox *ngSwitchCase="'orders'"></app-orders-inbox>
         <app-stock-movements *ngSwitchCase="'movements'"></app-stock-movements>
+        <app-box-request *ngSwitchCase="'box-request'"></app-box-request>
       </div>
     </main>
   </div>
