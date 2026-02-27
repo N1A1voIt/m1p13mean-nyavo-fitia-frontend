@@ -1,0 +1,4 @@
+/* Staff & Operations styles moved to Tailwind */
+:host {
+    display: block;
+}
