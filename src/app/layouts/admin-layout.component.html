@@ -1,0 +1,76 @@
+<div class="flex h-screen overflow-hidden bg-gray-50">
+  <aside class="w-72 p-6 flex flex-col glass m-4 h-[calc(100vh-2rem)] border-r border-gray-200">
+    <div class="mb-10">
+      <h2 class="text-3xl font-bold font-display text-indigo-600">Maal</h2>
+      <span class="uppercase text-[10px] tracking-widest text-gray-400 font-bold">Admin Portal</span>
+    </div>
+    
+    <nav class="flex flex-col gap-2 flex-grow overflow-y-auto pr-2">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg> Dashboard
+      </a>
+      <a routerLink="/admin/boxes" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> Mall Boxes
+      </a>
+      <a routerLink="/admin/map" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg> Mall Layout
+      </a>
+      <a routerLink="/admin/billing" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Finances
+      </a>
+      <a routerLink="/admin/utility" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Utilities
+      </a>
+      <a routerLink="/admin/maintenance" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Maintenance
+      </a>
+      <a routerLink="/admin/comms" routerLinkActive="active" class="nav-link">
+        <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg> Comms
+      </a>
+    </nav>
+    
+    <div class="pt-6 border-t border-gray-100 mt-auto" *ngIf="user$ | async as user">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
+           {{ user.name.substring(0,2).toUpperCase() }}
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-semibold text-gray-900 truncate">{{ user.name }}</p>
+          <p class="text-[10px] text-gray-500 uppercase tracking-tighter">{{ user.role }} Account</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <main class="flex-grow flex flex-col overflow-y-auto">
+    <header class="sticky top-0 z-10 px-8 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <div class="relative w-96">
+        <input 
+          type="text" 
+          placeholder="Search mall data..." 
+          class="w-full bg-gray-50 border border-gray-200 py-2.5 px-6 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+        >
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="px-4 py-2 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-100 transition-colors" routerLink="/">
+          Switch Portal
+        </button>
+        <div class="flex gap-2">
+           <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors text-gray-500">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+           </button>
+           <button 
+             (click)="logout()"
+             class="w-10 h-10 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors"
+           >
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+           </button>
+        </div>
+      </div>
+    </header>
+    
+    <section class="p-8 pb-16 animate-fade">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>
