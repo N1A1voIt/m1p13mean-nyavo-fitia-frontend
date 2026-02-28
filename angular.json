@@ -17,6 +17,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/frontend",
+            "index": "src/index.html",
             "polyfills": ["zone.js"],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
@@ -73,7 +75,10 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "outputPath": "dist/frontend-test"
+          }
         }
       }
     }
