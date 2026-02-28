@@ -1,0 +1,4 @@
+/* POS Register styles moved to Tailwind */
+:host {
+    display: block;
+}

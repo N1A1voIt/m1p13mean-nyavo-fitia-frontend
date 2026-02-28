@@ -8,6 +8,13 @@ import { UnauthorizedComponent } from './components/auth/unauthorized.component'
 import { authGuard } from './shared/guards/auth.guard';
 import { roleGuard } from './shared/guards/role.guard';
 
+import { PortalSelectorComponent } from './components/portal-selector.component';
+import { UnauthorizedComponent } from './components/auth/unauthorized.component';
+import { LoginComponent } from './components/auth/login.component';
+import { ShopLayoutComponent } from './layout/shop-layout.component';
+import { InventoryComponent } from './components/shop-erp/inventory.component';
+import { POSComponent } from './components/pos/pos.component';
+
 // Admin Imports
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { BoxListComponent } from './components/boxes/box-list.component';
@@ -18,17 +25,17 @@ import { EventCalendarComponent } from './components/comms/event-calendar.compon
 import { GlobalFinanceDashboardComponent } from './components/finance/finance-dashboard.component';
 
 // Shop Imports
-import { InventoryComponent } from './components/shop-erp/inventory.component';
-import { POSComponent } from './components/pos/pos.component';
-import { OrderManagementComponent } from './components/orders/order-management.component';
-import { ShopAccountingComponent } from './components/accounting/shop-accounting.component';
-import { ShopBillingComponent } from './components/billing/shop-billing.component';
+//import { InventoryComponent } from './components/shop-erp/inventory.component';
+//import { POSComponent } from './components/pos/pos.component';
+//import { OrderManagementComponent } from './components/orders/order-management.component';
+//import { ShopAccountingComponent } from './components/accounting/shop-accounting.component';
+//import { ShopBillingComponent } from './components/billing/shop-billing.component';
 
 // Client Imports
-import { MallMapComponent } from './components/map/mall-map.component';
-import { MarketplaceComponent } from './components/marketplace/marketplace.component';
-import { LoyaltyDashboardComponent } from './components/loyalty/loyalty-dashboard.component';
-import { ReservationBookingComponent } from './components/reservations/reservation-booking.component';
+//import { MallMapComponent } from './components/map/mall-map.component';
+//import { MarketplaceComponent } from './components/marketplace/marketplace.component';
+//import { LoyaltyDashboardComponent } from './components/loyalty/loyalty-dashboard.component';
+//import { ReservationBookingComponent } from './components/reservations/reservation-booking.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -61,24 +68,10 @@ export const routes: Routes = [
         children: [
             { path: 'inventory', component: InventoryComponent },
             { path: 'pos', component: POSComponent },
-            { path: 'orders', component: OrderManagementComponent },
-            { path: 'accounting', component: ShopAccountingComponent },
-            { path: 'billing', component: ShopBillingComponent },
-            { path: '', redirectTo: 'inventory', pathMatch: 'full' }
+            // { path: 'orders', component: OrderManagementComponent },
+            // { path: 'accounting', component: ShopAccountingComponent },
+            // { path: 'billing', component: ShopBillingComponent },
+            // { path: '', redirectTo: 'inventory', pathMatch: 'full' }
         ]
     },
-
-    // Client Portal
-    {
-        path: 'mall',
-        component: ClientLayoutComponent,
-        canActivate: [authGuard, roleGuard(['client', 'admin'])],
-        children: [
-            { path: 'map', component: MallMapComponent },
-            { path: 'marketplace', component: MarketplaceComponent },
-            { path: 'loyalty', component: LoyaltyDashboardComponent },
-            { path: 'reservations', component: ReservationBookingComponent },
-            { path: '', redirectTo: 'map', pathMatch: 'full' }
-        ]
-    }
 ];

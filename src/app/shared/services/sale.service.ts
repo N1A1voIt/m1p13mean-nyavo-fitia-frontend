@@ -1,0 +1,25 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class SaleService {
+    private apiUrl = environment.apiUrl + '/sales';
+
+    constructor(private http: HttpClient) { }
+
+    processSale(saleData: any): Observable<any> {
+        return this.http.post(this.apiUrl, saleData);
+    }
+
+    getSalesHistory(shopId: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/history`, { params: { shopId } });
+    }
+
+    getShopStats(shopId: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/stats/${shopId}`);
+    }
+}
