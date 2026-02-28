@@ -9,6 +9,7 @@ import { UnauthorizedComponent } from './components/auth/unauthorized.component'
 import { LoginComponent } from './components/auth/login.component';
 import { ShopLayoutComponent } from './layout/shop-layout.component';
 import { InventoryComponent } from './components/shop-erp/inventory.component';
+import { POSComponent } from './components/pos/pos.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
     { path: 'unauthorized', component: UnauthorizedComponent },
@@ -19,7 +20,7 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard(['boutique', 'admin'])],
         children: [
             { path: 'inventory', component: InventoryComponent },
-            // { path: 'pos', component: POSComponent },
+            { path: 'pos', component: POSComponent },
             // { path: 'orders', component: OrderManagementComponent },
             // { path: 'accounting', component: ShopAccountingComponent },
             // { path: 'billing', component: ShopBillingComponent },
