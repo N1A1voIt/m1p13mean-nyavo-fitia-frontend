@@ -1,0 +1,170 @@
+<!-- Header -->
+<div class="flex justify-between items-center mb-8">
+  <div>
+    <h1 class="text-4xl font-bold font-display text-gray-900 tracking-tight">Comms & Events</h1>
+    <p class="text-indigo-600 font-bold text-[10px] uppercase tracking-[0.2em] mt-1 italic">Mall Communications &amp; Event Scheduling</p>
+  </div>
+  <button (click)="openModal()" class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95">
+    + New Event / Ad
+  </button>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+  <!-- Calendar -->
+  <div class="xl:col-span-2 glass p-8 bg-white border-gray-100 shadow-sm animate-fade">
+    <div class="flex justify-between items-center mb-8">
+      <h3 class="text-xl font-bold font-display text-gray-900 italic">{{ monthLabel }}</h3>
+      <div class="flex gap-2">
+        <button (click)="prevMonth()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-50 border border-gray-100 font-bold">←</button>
+        <button (click)="nextMonth()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-50 border border-gray-100 font-bold">→</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-7 gap-px bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden shadow-inner">
+      <div *ngFor="let day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+           class="bg-gray-50 p-3 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">
+        {{ day }}
+      </div>
+
+      <div *ngFor="let d of calendarDays"
+           class="bg-white min-h-[90px] p-2 transition-colors hover:bg-indigo-50/30"
+           [class.bg-indigo-50]="isToday(d)"
+           [class.opacity-0]="d === null"
+           [class.pointer-events-none]="d === null">
+        <span class="text-xs font-bold" [class.text-indigo-600]="isToday(d)" [class.text-gray-800]="!isToday(d)">{{ d }}</span>
+        <div class="mt-1 space-y-0.5">
+          <div *ngFor="let e of getDayEvents(d)"
+               class="text-[9px] font-bold px-1 py-0.5 rounded truncate text-white"
+               [class]="typeColor(e.type)"
+               [title]="e.title">
+            {{ e.title }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Side panels -->
+  <div class="space-y-8">
+
+    <!-- Upcoming Events -->
+    <div class="glass p-8 bg-white border-gray-100 shadow-sm animate-fade" style="animation-delay: 0.1s">
+      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Upcoming Highlights</h3>
+      <div class="space-y-4">
+        <div *ngFor="let e of upcomingEvents" class="flex gap-4 items-center group">
+          <div class="w-12 h-14 rounded-xl overflow-hidden flex flex-col shadow-sm flex-shrink-0">
+            <span class="bg-indigo-600 text-white text-[8px] font-black text-center py-1 uppercase">{{ e.start | date:'MMM' }}</span>
+            <span class="bg-gray-50 flex-grow flex items-center justify-center font-black text-lg text-gray-800">{{ e.start | date:'dd' }}</span>
+          </div>
+          <div class="flex-grow min-w-0">
+            <p class="font-bold text-gray-900 truncate text-sm">{{ e.title }}</p>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{{ e.location || '—' }} · {{ e.type }}</p>
+            <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase" [class]="statusColor(e.status)">{{ e.status }}</span>
+          </div>
+          <button (click)="deleteEvent(e._id)" class="text-gray-200 hover:text-red-400 transition-colors text-xs font-bold flex-shrink-0">✕</button>
+        </div>
+        <div *ngIf="upcomingEvents.length === 0" class="text-center py-6 text-gray-300 text-xs font-bold uppercase tracking-widest">
+          No upcoming events
+        </div>
+      </div>
+    </div>
+
+    <!-- Ad Slots -->
+    <div class="glass p-8 bg-white border-gray-100 shadow-sm animate-fade" style="animation-delay: 0.2s">
+      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Active Ad Slots</h3>
+      <div class="space-y-3">
+        <div *ngFor="let a of adSlots" class="p-4 bg-gray-50 rounded-xl flex justify-between items-center">
+          <div>
+            <p class="text-xs font-bold text-gray-700">{{ a.title }}</p>
+            <p class="text-[10px] text-gray-400">{{ a.location || a.category }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-[8px] font-black uppercase rounded" [class]="statusColor(a.status)">{{ a.status }}</span>
+            <button (click)="deleteEvent(a._id)" class="text-gray-300 hover:text-red-400 transition-colors text-xs">✕</button>
+          </div>
+        </div>
+        <div *ngIf="adSlots.length === 0" class="text-center py-4 text-gray-300 text-xs font-bold uppercase tracking-widest">
+          No ad slots
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Create Event Modal -->
+<div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 p-10 animate-fade">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-2xl font-bold font-display text-gray-900">New Event / Ad</h2>
+      <button (click)="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 font-bold">✕</button>
+    </div>
+
+    <div class="space-y-5">
+      <div>
+        <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Title *</label>
+        <input [(ngModel)]="newEvent.title" type="text" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Type *</label>
+          <select [(ngModel)]="newEvent.type" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+            <option value="Event">Event</option>
+            <option value="Ad">Advertisement</option>
+            <option value="Promo">Promotion</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Status</label>
+          <select [(ngModel)]="newEvent.status" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+            <option value="Draft">Draft</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Live">Live</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Category *</label>
+          <select [(ngModel)]="newEvent.category" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+            <option *ngFor="let c of categoryOptions" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Location</label>
+          <select [(ngModel)]="newEvent.location" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+            <option *ngFor="let l of locationOptions" [value]="l">{{ l }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Start *</label>
+          <input [(ngModel)]="newEvent.start" type="datetime-local" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">End *</label>
+          <input [(ngModel)]="newEvent.end" type="datetime-local" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm font-bold">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Description</label>
+        <textarea [(ngModel)]="newEvent.description" rows="2" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl outline-none focus:border-indigo-400 text-sm resize-none"></textarea>
+      </div>
+
+      <div *ngIf="errorMsg" class="bg-red-50 border border-red-200 text-red-600 text-xs font-bold px-4 py-3 rounded-xl">{{ errorMsg }}</div>
+
+      <div class="flex gap-3 pt-2">
+        <button (click)="closeModal()" class="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all">Cancel</button>
+        <button (click)="saveEvent()" [disabled]="saving" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all disabled:opacity-50">
+          {{ saving ? 'Saving…' : 'Create' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
