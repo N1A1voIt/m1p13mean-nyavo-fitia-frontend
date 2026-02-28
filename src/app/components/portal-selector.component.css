@@ -1,0 +1,12 @@
+.portal-card {
+    @apply relative overflow-hidden;
+}
+
+.portal-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none opacity-0 transition-opacity duration-300;
+}
+
+.portal-card:hover::before {
+    @apply opacity-100;
+}

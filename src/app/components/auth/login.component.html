@@ -1,0 +1,101 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-6 animate-fade">
+  <div class="max-w-md w-full glass bg-white p-10 shadow-2xl shadow-indigo-100 rounded-[2.5rem] border-gray-100">
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-display font-black text-gray-900 tracking-tight">Access Control</h1>
+      <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mt-2 italic">Mall Management System</p>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="flex p-1.5 bg-gray-100 rounded-2xl shadow-inner mb-8">
+      <button 
+        (click)="isLogin = true"
+        [class.bg-white]="isLogin"
+        [class.shadow-md]="isLogin"
+        [class.text-indigo-600]="isLogin"
+        class="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300"
+      >
+        Login
+      </button>
+      <button 
+        (click)="isLogin = false"
+        [class.bg-white]="!isLogin"
+        [class.shadow-md]="!isLogin"
+        [class.text-indigo-600]="!isLogin"
+        class="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300"
+      >
+        Register
+      </button>
+    </div>
+
+    <form (submit)="isLogin ? login() : register()" class="space-y-6">
+      <div *ngIf="!isLogin">
+        <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Display Name</label>
+        <input 
+          [(ngModel)]="name" 
+          name="name" 
+          type="text" 
+          required
+          placeholder="Jean Dupont"
+          class="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-gray-900 font-bold"
+        >
+      </div>
+
+      <div>
+        <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Email Address</label>
+        <input 
+          [(ngModel)]="email" 
+          name="email" 
+          type="email" 
+          required
+          placeholder="admin@mall.mg"
+          class="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-gray-900 font-bold"
+        >
+      </div>
+
+      <div>
+        <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Password</label>
+        <input 
+          [(ngModel)]="password" 
+          name="password" 
+          type="password" 
+          required
+          placeholder="••••••••"
+          class="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-gray-900 font-bold"
+        >
+      </div>
+
+      <div *ngIf="!isLogin">
+        <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Initial Role</label>
+        <select 
+          [(ngModel)]="role" 
+          name="role"
+          class="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-gray-900 font-bold"
+        >
+          <option value="client">Mall Client</option>
+          <option value="boutique">Shop Owner (Boutique)</option>
+          <option value="admin">Main Administrator</option>
+        </select>
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="loading"
+        class="w-full py-5 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-indigo-600 transition-all active:scale-[0.98] shadow-xl shadow-gray-200 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+      >
+        <span *ngIf="loading">Processing...</span>
+        <span *ngIf="!loading">{{ isLogin ? 'Authenticate' : 'Create Account' }}</span>
+      </button>
+
+      <div *ngIf="error" class="mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold text-center">
+        {{ error }}
+      </div>
+    </form>
+    
+    <div class="mt-10 pt-10 border-t border-gray-50 text-center">
+       <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest italic leading-relaxed">
+         Secure End-to-End Encryption<br>
+         Certified Mall Ecosystem Support
+       </p>
+    </div>
+  </div>
+</div>
