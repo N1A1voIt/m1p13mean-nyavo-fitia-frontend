@@ -1,0 +1,70 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BoxService } from '../../shared/services/box.service';
+
+@Component({
+  selector: 'app-box-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './box-list.component.html',
+  styleUrl: './box-list.component.css'
+})
+export class BoxListComponent implements OnInit {
+  boxes: any[] = [];
+  occupiedCount = 0;
+  availableCount = 0;
+
+  isModalOpen = false;
+  newBox = {
+    boxNumber: '',
+    location: { floor: 0, zone: '' },
+    type: 'Boutique',
+    pricePerMonth: 0
+  };
+
+  constructor(private boxService: BoxService) { }
+
+  ngOnInit(): void {
+    this.loadBoxes();
+  }
+
+  loadBoxes(): void {
+    this.boxService.getBoxes().subscribe(res => {
+      this.boxes = res.data;
+      this.occupiedCount = this.boxes.filter(b => b.status === 'Occupé').length;
+      this.availableCount = this.boxes.filter(b => b.status === 'Libre').length;
+    });
+  }
+
+  openNewBoxModal() {
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.resetForm();
+  }
+
+  saveBox() {
+    if (!this.newBox.boxNumber || !this.newBox.location.zone) return;
+
+    this.boxService.createBox(this.newBox).subscribe(() => {
+      this.loadBoxes();
+      this.closeModal();
+    });
+  }
+
+  viewBoxDetails(box: any) {
+    alert(`Box ${box.boxNumber} - Details:\nStatus: ${box.status}\nLocation: ${box.location.zone}, Floor ${box.location.floor}`);
+  }
+
+  private resetForm() {
+    this.newBox = {
+      boxNumber: '',
+      location: { floor: 0, zone: '' },
+      type: 'Boutique',
+      pricePerMonth: 0
+    };
+  }
+}
