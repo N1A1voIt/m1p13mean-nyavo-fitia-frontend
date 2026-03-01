@@ -1,0 +1,48 @@
+<div class="mb-8">
+  <h1 class="text-4xl font-bold font-display text-gray-900 tracking-tight">Mall Performance</h1>
+  <p class="text-gray-500 mt-1">Real-time financial and operational snapshot</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <div class="lg:col-span-2 glass p-8 border-l-4 border-indigo-500 bg-white">
+    <p class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">Total Revenue (Paid)</p>
+    <p class="text-5xl font-black font-display text-gray-900 mb-4">{{ stats?.rentRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+    <div class="flex items-center gap-2 text-green-600 font-bold text-sm">
+      <span class="bg-green-100 px-2 py-0.5 rounded">↑ 12.4%</span>
+      <span class="text-gray-400 font-normal italic">vs last month</span>
+    </div>
+  </div>
+  
+  <div class="glass p-8 bg-white border-gray-100 shadow-sm">
+    <p class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">Pending Payments</p>
+    <p class="text-4xl font-bold font-display text-gray-900 mb-4">{{ stats?.pendingRent | currency:'MGA':'symbol':'1.0-0' }}</p>
+    <div class="flex items-center gap-2 text-amber-600 font-bold text-sm">
+      <span class="bg-amber-100 px-2 py-0.5 rounded"><svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Needs Attention</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="glass p-8 bg-white shadow-sm border-gray-100">
+    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Occupancy Rate</h3>
+    <div class="flex flex-col items-center justify-center p-4">
+      <div class="text-6xl font-black font-display text-indigo-600 mb-4">{{ stats?.occupancy?.rate | number:'1.1-1' }}%</div>
+      <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-4">
+        <div class="h-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all duration-1000 ease-out shadow-lg shadow-indigo-200" [style.width.%]="stats?.occupancy?.rate"></div>
+      </div>
+      <p class="text-gray-500 text-sm font-medium">
+        <span class="text-gray-900 font-bold">{{ stats?.occupancy?.occupied }}</span> / {{ stats?.occupancy?.total }} Boxes Occupied
+      </p>
+    </div>
+  </div>
+
+  <!--div class="glass p-8 bg-white shadow-sm border-gray-100">
+    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Revenue Distribution</h3>
+    <div class="space-y-4">
+      <div *ngFor="let item of stats?.revenueByType" class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+        <span class="font-bold text-gray-700">{{ item._id }}</span>
+        <span class="font-bold font-display text-lg text-indigo-600">{{ item.total | currency:'MGA':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+  </div-->
+</div>

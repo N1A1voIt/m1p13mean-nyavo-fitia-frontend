@@ -1,0 +1,88 @@
+<div class="flex justify-between items-center mb-10">
+  <div>
+    <h1 class="text-4xl font-bold font-display text-gray-900 tracking-tight">Incoming Orders</h1>
+    <p class="text-pink-600 font-bold text-xs uppercase tracking-[0.2em] mt-1">Order Fulfillment Queue</p>
+  </div>
+  
+  <div class="flex gap-4">
+    <div class="glass px-6 py-2.5 bg-white border-gray-100 flex items-center gap-3">
+      <span class="text-amber-500 font-black text-xl">{{ pendingCount }}</span>
+      <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pending</span>
+    </div>
+    <div class="glass px-6 py-2.5 bg-white border-gray-100 flex items-center gap-3">
+      <span class="text-green-500 font-black text-xl">{{ readyCount }}</span>
+      <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ready</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-16rem)]">
+  <div class="flex flex-col glass bg-white border-gray-100 shadow-sm overflow-hidden animate-fade">
+    <div class="p-6 border-b border-gray-50 bg-gray-50/50">
+       <h3 class="text-sm font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+         <span class="w-2 h-2 rounded-full bg-amber-400"></span> Fulfillment Board
+       </h3>
+    </div>
+    <div class="flex-grow overflow-y-auto p-6 space-y-4">
+      <div *ngFor="let o of queue" class="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-pink-200 hover:shadow-lg transition-all duration-300">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-gray-100 px-2 py-1 rounded text-[10px] font-mono text-gray-500">ORD-{{ o._id.substring(o._id.length - 6).toUpperCase() }}</span>
+          <span class="px-3 py-1 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ o.status }}</span>
+        </div>
+        <p class="text-lg font-black text-gray-900 mb-2 truncate">{{ o.clientId?.name || 'Walk-in Client' }}</p>
+        <div class="space-y-1 mb-6">
+          <p *ngFor="let item of o.items" class="text-xs text-gray-500 font-medium">
+            <span class="text-gray-900 font-bold">{{ item.quantity }}x</span> {{ item.name }}
+          </p>
+        </div>
+        <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+          <p class="text-xl font-black font-display text-gray-900">{{ o.totalAmount | currency:'MGA':'symbol':'1.0-0' }}</p>
+          <button 
+            (click)="setStatus(o._id, 'ReadyForCollect')"
+            class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100"
+          >
+            Mark Ready
+          </button>
+        </div>
+      </div>
+      <div *ngIf="queue.length === 0" class="h-full flex flex-col items-center justify-center opacity-20 italic">
+         Queue is currently clear
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col glass bg-indigo-50/10 border-indigo-100 shadow-sm overflow-hidden animate-fade" style="animation-delay: 0.1s">
+    <div class="p-6 border-b border-indigo-50 bg-indigo-50/50">
+       <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
+         <span class="w-2 h-2 rounded-full bg-green-500"></span> Ready for Collection
+       </h3>
+    </div>
+    <div class="flex-grow overflow-y-auto p-6 space-y-4">
+      <div *ngFor="let o of awaiting" class="p-6 bg-white border border-green-100 rounded-2xl shadow-md ring-2 ring-green-50 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-16 h-16 bg-green-500 rounded-bl-full flex items-center justify-center text-white pb-4 pl-4 opacity-70 italic text-xs font-black">READY</div>
+        
+        <div class="mb-4">
+          <span class="bg-gray-50 px-2 py-1 rounded text-[10px] font-mono text-gray-400">ORD-{{ o._id.substring(o._id.length - 6).toUpperCase() }}</span>
+        </div>
+        <p class="text-lg font-black text-gray-900 mb-2 truncate pr-16">{{ o.clientId?.name }}</p>
+        <div class="space-y-1 mb-6">
+          <p *ngFor="let item of o.items" class="text-xs text-gray-500 font-medium italic">
+            <span class="text-gray-900 font-bold">{{ item.quantity }}x</span> {{ item.name }}
+          </p>
+        </div>
+        <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+          <p class="text-2xl font-black font-display text-green-600">{{ o.totalAmount | currency:'MGA':'symbol':'1.0-0' }}</p>
+          <button 
+            (click)="markCollected(o._id)"
+            class="px-6 py-2.5 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-700 transition-all active:scale-95 shadow-lg shadow-green-100"
+          >
+            Mark Collected
+          </button>
+        </div>
+      </div>
+      <div *ngIf="awaiting.length === 0" class="h-full flex flex-col items-center justify-center text-gray-300 italic">
+         Waiting for pickups
+      </div>
+    </div>
+  </div>
+</div>

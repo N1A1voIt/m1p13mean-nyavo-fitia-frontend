@@ -1,0 +1,76 @@
+<div class="flex justify-between items-center mb-8">
+  <h1 class="text-4xl font-bold font-display text-gray-900 tracking-tight">Billing & Invoices</h1>
+  <button 
+    (click)="generateMonthlyRent()"
+    class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:shadow-indigo-200 transition-all active:scale-95"
+  >
+    Generate Monthly Rent
+  </button>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+  <div class="glass p-8 bg-white border-gray-100 shadow-sm">
+    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Total Expected</p>
+    <p class="text-3xl font-black font-display text-gray-900">{{ totalExpected | currency:'MGA':'symbol':'1.0-0' }}</p>
+  </div>
+  <div class="glass p-8 bg-white border-gray-100 shadow-sm border-b-4 border-green-500">
+    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2 text-green-600">Total Received</p>
+    <p class="text-3xl font-black font-display text-green-600">{{ totalReceived | currency:'MGA':'symbol':'1.0-0' }}</p>
+  </div>
+  <div class="glass p-8 bg-white border-gray-100 shadow-sm border-b-4 border-red-500">
+    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2 text-red-600">Pending Amount</p>
+    <p class="text-3xl font-black font-display text-red-600">{{ totalPending | currency:'MGA':'symbol':'1.0-0' }}</p>
+  </div>
+</div>
+
+<div class="glass bg-white overflow-hidden border-gray-100 shadow-sm animate-fade">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-50/50 border-b border-gray-100">
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Invoice #</th>
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Type</th>
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Box</th>
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Due Date</th>
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Amount</th>
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Status</th>
+          <th class="px-8 py-5 text-[10px] uppercase font-bold text-gray-400 tracking-widest">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        <tr *ngFor="let invoice of invoices" class="hover:bg-gray-50/50 transition-colors group">
+          <td class="px-8 py-6 font-mono text-xs text-gray-500">{{ invoice.invoiceNumber }}</td>
+          <td class="px-8 py-6">
+            <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+              {{ invoice.type }}
+            </span>
+          </td>
+          <td class="px-8 py-6 font-bold text-gray-700">Box {{ invoice.boxId?.boxNumber }}</td>
+          <td class="px-8 py-6 text-sm text-gray-500">{{ invoice.dueDate | date }}</td>
+          <td class="px-8 py-6 text-lg font-black font-display text-gray-900">{{ invoice.amount | currency:'MGA':'symbol':'1.0-0' }}</td>
+          <td class="px-8 py-6">
+            <span 
+              class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest inline-block"
+              [ngClass]="{
+                'bg-amber-100 text-amber-700': invoice.status === 'Pending',
+                'bg-green-100 text-green-700': invoice.status === 'Paid',
+                'bg-red-100 text-red-700': invoice.status === 'Late'
+              }"
+            >
+              {{ invoice.status }}
+            </span>
+          </td>
+          <td class="px-8 py-6">
+            <button 
+              *ngIf="invoice.status === 'Pending'" 
+              (click)="processPayment(invoice._id)"
+              class="px-4 py-2 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 shadow-md shadow-green-100 transition-all active:scale-95"
+            >
+              Mark Paid
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-tr from-indigo-50/50 to-transparent animate-fade relative overflow-hidden">
+  <!-- Top Right Auth Status -->
+  <div class="absolute top-8 right-8 z-20">
+    <div *ngIf="user$ | async as user; else guest" class="flex items-center gap-4 glass bg-white/40 p-2 pl-6 pr-4 rounded-full border-white">
+       <div class="flex flex-col items-end">
+          <span class="text-xs font-black text-gray-900 leading-none">{{ user.name }}</span>
+          <span class="text-[9px] uppercase font-bold text-indigo-500 tracking-tighter">{{ user.role }}</span>
+       </div>
+       <button (click)="logout()" class="w-10 h-10 rounded-full bg-white shadow-xl hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center text-lg text-gray-500">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+       </button>
+    </div>
+    <ng-template #guest>
+       <a routerLink="/login" class="px-8 py-3 bg-gray-900 text-white font-black uppercase tracking-widest rounded-full hover:bg-indigo-600 transition-all shadow-2xl shadow-gray-200">
+          Sign In
+       </a>
+    </ng-template>
+  </div>
+
+  <div class="text-center mb-16 relative z-10 transition-transform duration-700" [class.scale-90]="user$ | async">
+    <h1 class="text-6xl md:text-8xl font-black font-display mb-4 text-gray-900 tracking-tighter">Maal Ecosystem</h1>
+    <p class="text-lg md:text-xl text-gray-400 font-medium italic">Integrated digital infrastructure for premium mall retail</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl w-full relative z-10">
+    <!-- Admin Portal -->
+    <div 
+      class="portal-card glass group cursor-pointer p-12 text-center flex flex-col items-center hover:-translate-y-4 hover:border-indigo-500 transition-all duration-300 rounded-[3rem]" 
+      [routerLink]="['/admin']"
+    >
+      <div class="mb-8 group-hover:scale-110 transition-transform">
+        <svg class="w-16 h-16 text-indigo-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+      </div>
+      <h3 class="text-2xl font-bold font-display mb-4 text-gray-900">Admin Portal</h3>
+      <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-6">Operations & Finance</p>
+      <p class="text-sm text-gray-500 leading-relaxed italic opacity-0 group-hover:opacity-100 transition-opacity">Manage retail units, billing, utility readings, and mall staff planning.</p>
+    </div>
+
+    <!-- Shop ERP -->
+    <div 
+      class="portal-card glass group cursor-pointer p-12 text-center flex flex-col items-center hover:-translate-y-4 hover:border-pink-500 transition-all duration-300 rounded-[3rem]" 
+      [routerLink]="['/shop']"
+    >
+      <div class="mb-8 group-hover:scale-110 transition-transform">
+        <svg class="w-16 h-16 text-pink-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+      </div>
+      <h3 class="text-2xl font-bold font-display mb-4 text-gray-900">Shop Owner</h3>
+      <p class="text-[10px] text-pink-400 uppercase font-black tracking-widest mb-6">Boutique Mini-ERP</p>
+      <p class="text-sm text-gray-500 leading-relaxed italic opacity-0 group-hover:opacity-100 transition-opacity">Digital register, stock tracking, sales accounting, and pickup orders.</p>
+    </div>
+
+    <!-- Client Experience -->
+    <div 
+      class="portal-card glass group cursor-pointer p-12 text-center flex flex-col items-center hover:-translate-y-4 hover:border-blue-500 transition-all duration-300 rounded-[3rem]" 
+      [routerLink]="['/mall']"
+    >
+      <div class="mb-8 group-hover:scale-110 transition-transform">
+        <svg class="w-16 h-16 text-blue-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+      </div>
+      <h3 class="text-2xl font-bold font-display mb-4 text-gray-900">Mall Visitor</h3>
+      <p class="text-[10px] text-blue-400 uppercase font-black tracking-widest mb-6">Customer Journey</p>
+      <p class="text-sm text-gray-500 leading-relaxed italic opacity-0 group-hover:opacity-100 transition-opacity">Explore paths, browse marketplace, earn loyalty points, and book services.</p>
+    </div>
+  </div>
+  
+  <div class="mt-20 text-[10px] font-black text-gray-300 uppercase tracking-[0.4em] italic z-10">
+     Designed for Luxury • Powered by Maal
+  </div>
+</div>

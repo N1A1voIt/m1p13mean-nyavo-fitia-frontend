@@ -1,6 +1,6 @@
 # M1p13meanNyavoFitiaFrontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21. And Node JS 22.22.0
 
 ## Development server
 
