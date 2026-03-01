@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: '/api'
+  apiUrl: 'https://m1p13mean-nyavo-fitia-backend.vercel.app/api'
 };
