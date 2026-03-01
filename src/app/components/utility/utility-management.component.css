@@ -1,0 +1,4 @@
+/* Utility Management styles moved to Tailwind */
+:host {
+    display: block;
+}
