@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClientMapService } from '../../shared/services/client-map.service';
 import { OrderService } from '../../shared/services/order.service';
-import { CartService } from '../../shared/services/cart.service';
+// import { CartService } from '../../shared/services/cart.service';
 import { forkJoin } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CartService } from '../../shared/services/cart.service';
 
 @Component({
   selector: 'app-marketplace',
