@@ -24,6 +24,8 @@ import { MallMapComponent } from './components/map/mall-map.component';
 import { BillingListComponent } from './components/billing/billing-list.component';
 import { UtilityManagementComponent } from './components/utility/utility-management.component';
 import { MaintenanceComponent } from './components/maintenance/maintenance.component';
+import { EventCalendarComponent } from './components/comms/event-calendar.component';
+import { MarketplaceComponent } from './components/marketplace/marketplace.component';
 
 // Admin Imports
 // import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -64,7 +66,7 @@ export const routes: Routes = [
             { path: 'billing', component: BillingListComponent },
             { path: 'utility', component: UtilityManagementComponent },
             { path: 'maintenance', component: MaintenanceComponent },
-            // { path: 'comms', component: EventCalendarComponent },
+            { path: 'comms', component: EventCalendarComponent },
             // { path: 'finance', component: GlobalFinanceDashboardComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
@@ -84,4 +86,16 @@ export const routes: Routes = [
             { path: '', redirectTo: 'inventory', pathMatch: 'full' }
         ]
     },
+    {
+        path: 'mall',
+        component: ClientLayoutComponent,
+        canActivate: [authGuard, roleGuard(['client', 'admin'])],
+        children: [
+            { path: 'map', component: MallMapComponent },
+            { path: 'marketplace', component: MarketplaceComponent },
+            // { path: 'loyalty', component: LoyaltyDashboardComponent },
+            // { path: 'reservations', component: ReservationBookingComponent },
+            { path: '', redirectTo: 'map', pathMatch: 'full' }
+        ]
+    }
 ];
