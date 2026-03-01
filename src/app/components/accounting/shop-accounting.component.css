@@ -1,0 +1,4 @@
+/* Shop Accounting styles moved to Tailwind */
+:host {
+    display: block;
+}
