@@ -1,0 +1,228 @@
+<div class="mb-8 px-6 pt-6 flex justify-between items-center z-10 relative">
+  <div>
+  <h1 class="text-3xl font-bold font-display text-gray-900 tracking-tight">Mall Plan de Masse</h1>
+  <p class="text-blue-600 font-bold text-[10px] uppercase tracking-[0.2em] mt-1 italic">Administration & Directory</p>
+  </div>
+  <button *ngIf="isAdmin" (click)="toggleEditMode()" class="px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-sm" [ngClass]="isEditMode ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-white border border-gray-200 hover:bg-gray-50'">
+    {{ isEditMode ? 'Lock Plan' : 'Edit Layout' }}
+  </button>
+</div>
+
+<!-- Plan de Masse Container -->
+<div class="flex flex-col lg:flex-row h-[75vh] overflow-hidden bg-[#e5e7eb] rounded-3xl m-6 border-4 border-gray-300 shadow-inner relative">
+  
+  <div class="flex-grow relative overflow-hidden group bg-[url('https://www.transparenttextures.com/patterns/blueprint.png')] bg-opacity-50">
+    
+    <!-- Level Selector -->
+    <div class="absolute top-6 left-6 z-20 flex flex-col gap-2 bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-lg border border-gray-200">
+      <button 
+        (click)="currentLevel = 0"
+        [class.bg-gray-800]="currentLevel === 0"
+        [class.text-white]="currentLevel === 0"
+        [class.text-gray-500]="currentLevel !== 0"
+        class="px-4 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all hover:bg-gray-100 border border-transparent"
+        [class.hover:border-gray-300]="currentLevel !== 0"
+      >
+        RDC (Ground)
+      </button>
+      <button 
+        (click)="currentLevel = 1"
+        [class.bg-gray-800]="currentLevel === 1"
+        [class.text-white]="currentLevel === 1"
+        [class.text-gray-500]="currentLevel !== 1"
+        class="px-4 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all hover:bg-gray-100 border border-transparent"
+        [class.hover:border-gray-300]="currentLevel !== 1"
+      >
+        Level 1
+      </button>
+    </div>
+
+    <!-- Map Viewport -->
+    <div class="h-full w-full overflow-auto cursor-grab active:cursor-grabbing p-20 map-viewport flex items-center justify-center">
+      
+       <!-- The Blueprint Canvas -->
+       <div class="relative w-[1400px] h-[900px] bg-[#f8f9fa] border-2 border-gray-300 shadow-2xl overflow-hidden pattern-grid-lg" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+           
+           <!-- Structural Walls overlay for blueprint feel -->
+           <div class="absolute inset-4 border-8 border-gray-400 opacity-20 pointer-events-none rounded-3xl"></div>
+           <div class="absolute inset-1/4 border-4 border-gray-400 opacity-10 pointer-events-none rounded-full"></div>
+
+           <!-- Fixed Amenities: large areas (rendered below shops) -->
+           <div
+             *ngFor="let item of levelFixedItems"
+             class="absolute border-2 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-200"
+             [class]="item.style"
+             [class.cursor-pointer]="!isEditMode"
+             [class.hover:brightness-95]="!isEditMode"
+             [class.ring-2]="selectedVenue?.label === item.label"
+             [class.ring-indigo-500]="selectedVenue?.label === item.label"
+             [class.pointer-events-none]="isEditMode"
+             [ngStyle]="{
+               'top.%': item.y,
+               'left.%': item.x,
+               'width.px': item.w,
+               'height.px': item.h,
+               'z-index': item.type === 'area' ? 1 : 5
+             }"
+             (click)="!isEditMode && selectVenue(item)"
+           >
+             <span class="text-xl mb-1">{{ item.icon }}</span>
+             <span class="text-[9px] font-black uppercase tracking-widest text-center px-2 leading-tight">{{ item.label }}</span>
+           </div>
+           <div 
+             *ngFor="let shop of levelShops" 
+             class="absolute rounded-sm border-[3px] shadow-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group/node" 
+             [ngClass]="{
+                  'bg-[#dbeafe] border-[#3b82f6] text-[#1e3a8a] z-10': shop.status === 'Occupé',
+                  'bg-[#f3f4f6] border-[#9ca3af] text-[#6b7280] z-0': shop.status === 'Libre',
+                  'bg-[#fef3c7] border-[#f59e0b] text-[#92400e] z-0': shop.status === 'En travaux',
+                  'hover:z-30 hover:shadow-xl hover:-translate-y-1 hover:border-[#111827]': !isEditMode,
+                  'cursor-move shadow-md opacity-90 ring-4 ring-blue-400/50 hover:scale-105': isEditMode 
+             }"
+             [ngStyle]="{
+                  'top.%': shop.location.pos?.y || 20, 
+                  'left.%': shop.location.pos?.x || 30,
+                  'width.px': shop.dimensions?.width ? shop.dimensions.width * 20 : (shop.type === 'FoodCourt' ? 120 : 80),
+                  'height.px': shop.dimensions?.length ? shop.dimensions.length * 20 : (shop.type === 'Kiosque' ? 60 : 80)
+             }"
+             [draggable]="isEditMode"
+             (dragstart)="onDragStart($event, shop)"
+             (click)="selectShop(shop)"
+           >
+             
+             <span class="text-[10px] font-black uppercase tracking-widest text-center px-1 truncate w-full">{{ shop.boxNumber }}</span>
+             
+             <!-- Occupancy Status Indicator inside box -->
+             <span *ngIf="shop.status === 'Occupé'" class="mt-1 text-[8px] font-bold bg-[#1e3a8a] text-white px-1.5 py-0.5 rounded-full truncate max-w-[90%]">
+                 {{ shop.currentTenant?.name || 'Occupied' }}
+             </span>
+             <span *ngIf="shop.status === 'Libre'" class="mt-1 text-[8px] font-bold uppercase tracking-wider opacity-60">
+                 Libre
+             </span>
+             <span *ngIf="shop.status === 'En travaux'" class="mt-1">
+                 <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+             </span>
+
+             <!-- Hover Tooltip (Disabled in edit mode) -->
+             <div *ngIf="!isEditMode" class="absolute -top-14 left-1/2 -translate-x-1/2 px-4 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover/node:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-xl z-50 flex flex-col items-center">
+                <span>{{ shop.currentTenant?.name || 'Unassigned' }}</span>
+                <span class="text-gray-400 font-normal mt-0.5">{{ shop.type }} • {{ shop.location.zone }}</span>
+             </div>
+           </div>
+       </div>
+    </div>
+  </div>
+
+  <!-- Details Sidebar -->
+  <div class="w-full lg:w-96 p-8 bg-white border-l-4 border-gray-200 flex flex-col animate-slide-in-right z-30 shadow-2xl" *ngIf="selectedShop">
+    <div class="flex justify-between items-start mb-8 pb-6 border-b border-gray-100">
+      <div>
+        <span class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-sm mb-3 inline-block"
+             [ngClass]="{
+                'bg-blue-100 text-blue-800': selectedShop.status === 'Occupé',
+                'bg-gray-100 text-gray-600': selectedShop.status === 'Libre',
+                'bg-amber-100 text-amber-800': selectedShop.status === 'En travaux'
+             }"
+        >
+            {{ selectedShop.status }}
+        </span>
+        <h2 class="text-2xl font-black font-display text-gray-900 leading-tight mb-1">{{ selectedShop.currentTenant?.name || 'Vacant Box' }}</h2>
+        <p class="text-gray-500 text-sm font-mono tracking-tight">ID: {{ selectedShop.boxNumber }}</p>
+      </div>
+      <button (click)="selectedShop = null" class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">✕</button>
+    </div>
+
+    <div class="space-y-6 flex-grow">
+      
+      <div class="grid grid-cols-2 gap-4">
+          <div class="p-4 bg-gray-50 border border-gray-100 rounded-xl">
+              <p class="text-[9px] uppercase font-bold text-gray-400 tracking-widest mb-1">Zone</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedShop.location.zone }}</p>
+          </div>
+          <div class="p-4 bg-gray-50 border border-gray-100 rounded-xl">
+              <p class="text-[9px] uppercase font-bold text-gray-400 tracking-widest mb-1">Category</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedShop.type }}</p>
+          </div>
+      </div>
+
+      <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl" *ngIf="selectedShop.status === 'Occupé'">
+         <p class="text-[10px] uppercase font-bold text-blue-400 tracking-widest mb-2 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Tenant Details</p>
+         <p class="text-sm text-blue-900 font-medium">Currently leased by {{ selectedShop.currentTenant?.name }}.</p>
+      </div>
+      
+      <div class="p-5 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center h-24" *ngIf="selectedShop.status === 'Libre'">
+         <p class="text-[11px] uppercase font-bold text-gray-400 tracking-widest text-center">Available for Assignment</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 pt-4">
+        <button *ngIf="selectedShop.status === 'Occupé'" (click)="viewStorefront(selectedShop._id)" class="w-full py-4 bg-gray-900 text-white font-bold text-sm tracking-wide rounded-xl hover:bg-black transition-all shadow-lg active:scale-95">
+            View Storefront
+        </button>
+        <button *ngIf="isAdmin && selectedShop.status === 'Libre'" class="w-full py-4 bg-blue-600 text-white font-bold text-sm tracking-wide rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">
+            Assign Shop
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Venue Events Sidebar -->
+  <div class="w-full lg:w-96 p-8 bg-white border-l-4 border-indigo-100 flex flex-col animate-slide-in-right z-30 shadow-2xl overflow-y-auto" *ngIf="selectedVenue">
+    <div class="flex justify-between items-start mb-8 pb-6 border-b border-gray-100">
+      <div>
+        <span class="text-2xl mb-2 block">{{ selectedVenue.icon }}</span>
+        <h2 class="text-2xl font-black font-display text-gray-900 leading-tight">{{ selectedVenue.label }}</h2>
+        <p class="text-indigo-500 text-[10px] font-bold uppercase tracking-widest mt-1">Scheduled Events</p>
+      </div>
+      <button (click)="selectedVenue = null" class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors flex-shrink-0">✕</button>
+    </div>
+
+    <div class="space-y-4 flex-grow">
+      <div *ngFor="let e of venueEvents" class="p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:border-indigo-200 transition-colors">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <p class="font-bold text-gray-900 text-sm leading-tight">{{ e.title }}</p>
+          <span class="text-[9px] font-black uppercase px-2 py-1 rounded-full flex-shrink-0"
+            [ngClass]="{
+              'bg-green-100 text-green-700': e.status === 'Live',
+              'bg-blue-100 text-blue-700': e.status === 'Confirmed',
+              'bg-gray-100 text-gray-500': e.status === 'Draft',
+              'bg-red-100 text-red-400': e.status === 'Ended'
+            }">
+            {{ e.status }}
+          </span>
+        </div>
+        <div class="flex gap-4 text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+          <span>{{ e.type }} · {{ e.category }}</span>
+        </div>
+        <div class="mt-2 text-[10px] text-gray-400 font-medium">
+          {{ e.start | date:'d MMM, HH:mm' }} → {{ e.end | date:'d MMM, HH:mm' }}
+        </div>
+        <p *ngIf="e.description" class="mt-2 text-xs text-gray-500 italic line-clamp-2">{{ e.description }}</p>
+      </div>
+
+      <div *ngIf="venueEvents.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
+        <span class="text-4xl mb-4 opacity-30">📅</span>
+        <p class="text-gray-300 font-bold uppercase tracking-widest text-[10px]">No events scheduled here</p>
+        <a *ngIf="isAdmin" routerLink="/admin/comms" class="mt-4 text-indigo-500 text-[10px] font-bold uppercase tracking-wider hover:underline">+ Add Event →</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Legend -->
+  <div class="absolute bottom-6 right-6 z-20 flex flex-wrap gap-3 p-3 bg-white/90 backdrop-blur-md rounded-xl border border-gray-200 shadow-lg max-w-lg" *ngIf="!selectedShop">
+     <div class="flex items-center gap-2 px-2 py-1 text-[10px] font-bold text-gray-600">
+       <span class="w-4 h-4 rounded-sm border-2 border-[#3b82f6] bg-[#dbeafe]"></span> Occupied
+     </div>
+     <div class="flex items-center gap-2 px-2 py-1 text-[10px] font-bold text-gray-600 border-l border-gray-200 pl-3">
+       <span class="w-4 h-4 rounded-sm border-2 border-[#9ca3af] bg-[#f3f4f6]"></span> Libre
+     </div>
+     <div class="flex items-center gap-2 px-2 py-1 text-[10px] font-bold text-gray-600 border-l border-gray-200 pl-3">
+       <span class="w-4 h-4 rounded-sm border-2 border-[#f59e0b] bg-[#fef3c7]"></span> En travaux
+     </div>
+     <div class="flex items-center gap-2 px-2 py-1 text-[10px] font-bold text-gray-600 border-l border-gray-200 pl-3">
+       <span class="w-4 h-4 rounded-xl border-2 border-slate-400 bg-slate-200/60"></span> Area
+     </div>
+     <div class="flex items-center gap-2 px-2 py-1 text-[10px] font-bold text-gray-600 border-l border-gray-200 pl-3">
+       🚻 WC &nbsp; 💳 ATM &nbsp; ↕️ Escalators &nbsp; 🚨 Exit
+     </div>
+  </div>
+</div>
