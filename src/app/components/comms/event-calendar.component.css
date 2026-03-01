@@ -1,0 +1,4 @@
+/* Event Calendar styles moved to Tailwind */
+:host {
+    display: block;
+}
