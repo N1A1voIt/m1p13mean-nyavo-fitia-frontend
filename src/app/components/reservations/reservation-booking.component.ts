@@ -60,24 +60,26 @@ export class ReservationBookingComponent implements OnInit {
                 this.shops = res.data;
                 if (this.shops.length > 0) this.newReservation.shopId = this.shops[0]._id;
             });
+        } else {
             // For Salon de coiffure, we filter by HairSalon type
             this.boxService.getBoxes({ type: 'HairSalon' }).subscribe(res => {
                 this.shops = res.data;
                 if (this.shops.length > 0) this.newReservation.shopId = this.shops[0]._id;
             });
         }
+    }
 
-        book(): void {
-            this.reservationService.createReservation(this.newReservation).subscribe(() => {
-                alert('Reservation successful!');
-                this.refreshData();
-                // Reset some fields
-                this.newReservation.notes = '';
-            });
-        }
+    book(): void {
+        this.reservationService.createReservation(this.newReservation).subscribe(() => {
+            alert('Reservation successful!');
+            this.refreshData();
+            // Reset some fields
+            this.newReservation.notes = '';
+        });
+    }
 
-        cancelReservation(id: string): void {
-            if(confirm('Are you sure you want to cancel this reservation?')) {
+    cancelReservation(id: string): void {
+        if (confirm('Are you sure you want to cancel this reservation?')) {
             this.reservationService.updateReservation(id, { status: 'Canceled' }).subscribe(() => {
                 this.refreshData();
             });
