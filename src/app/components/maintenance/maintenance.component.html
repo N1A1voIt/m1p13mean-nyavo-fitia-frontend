@@ -1,0 +1,88 @@
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+  <div>
+    <h1 class="text-4xl font-bold font-display text-gray-900 tracking-tight">Staff & Operations</h1>
+    <p class="text-gray-500 mt-1 font-medium">Real-time team planning and attendance tracking</p>
+  </div>
+  
+  <div class="flex p-1.5 bg-gray-100 rounded-2xl shadow-inner">
+    <button 
+      (click)="activeTab = 'Security'"
+      [class.bg-white]="activeTab === 'Security'"
+      [class.shadow-md]="activeTab === 'Security'"
+      [class.text-indigo-600]="activeTab === 'Security'"
+      class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300"
+    >
+      Security
+    </button>
+    <button 
+      (click)="activeTab = 'Maintenance'"
+      [class.bg-white]="activeTab === 'Maintenance'"
+      [class.shadow-md]="activeTab === 'Maintenance'"
+      [class.text-indigo-600]="activeTab === 'Maintenance'"
+      class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300"
+    >
+      Maintenance
+    </button>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+  <div class="xl:col-span-2 glass p-8 bg-white border-gray-100 shadow-sm animate-fade">
+    <h3 class="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em] mb-8">Team Schedule</h3>
+    <div class="space-y-4">
+      <div *ngFor="let staff of filteredPlanning" class="group flex flex-col md:flex-row items-start md:items-center gap-6 p-6 border border-gray-50 rounded-2xl hover:border-indigo-100 hover:bg-indigo-50/10 transition-all duration-300">
+        <div class="flex-grow">
+          <p class="text-lg font-black text-gray-900 mb-1">{{ staff.userId?.name || 'Staff Member' }}</p>
+          <span 
+            class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest inline-block"
+            [ngClass]="staff.status === 'OnLeave' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'"
+          >
+            {{ staff.status }}
+          </span>
+        </div>
+        
+        <div class="min-w-[180px]" *ngIf="staff.shifts.length > 0">
+           <p class="text-[9px] uppercase font-bold text-gray-400 mb-1">Current Shift</p>
+           <div class="flex items-center gap-2">
+             <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{{ staff.shifts[0].zone }}</span>
+             <span class="text-xs font-bold text-gray-500">{{ staff.shifts[0].start | date:'shortTime' }} - {{ staff.shifts[0].end | date:'shortTime' }}</span>
+           </div>
+        </div>
+
+        <button class="px-4 py-2 bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-wider rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-all">
+          Modify
+        </button>
+      </div>
+      
+      <div *ngIf="filteredPlanning.length === 0" class="py-20 text-center">
+         <div class="text-4xl mb-4 opacity-20"><svg class="w-6 h-6 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
+         <p class="text-gray-300 italic">No schedule data for this team today</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass p-8 bg-white border-gray-100 shadow-sm animate-fade" style="animation-delay: 0.1s">
+    <h3 class="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em] mb-8">Live Attendance</h3>
+    <div class="space-y-6">
+      <div *ngFor="let log of attendanceLogs" class="flex items-center gap-4 group">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center font-black text-lg shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform">
+          {{ log.userName?.charAt(0) }}
+        </div>
+        <div class="flex-grow">
+          <p class="font-bold text-gray-900">{{ log.userName }}</p>
+          <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Clock In: <span class="text-gray-900 italic font-medium">{{ log.clockIn | date:'HH:mm' }}</span></p>
+        </div>
+        <div 
+          class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"
+          [ngClass]="log.isLate ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-700'"
+        >
+          {{ log.isLate ? 'Late' : 'Verified' }}
+        </div>
+      </div>
+    </div>
+    
+    <button class="w-full mt-10 py-4 bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl border-2 border-dashed border-gray-100 hover:border-indigo-200 hover:text-indigo-400 transition-all">
+      Extract Full Daily Log
+    </button>
+  </div>
+</div>
