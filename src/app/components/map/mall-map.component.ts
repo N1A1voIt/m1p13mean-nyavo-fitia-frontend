@@ -5,6 +5,7 @@ import { ClientMapService } from '../../shared/services/client-map.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { BoxService } from '../../shared/services/box.service';
 import { EventService } from '../../shared/services/event.service';
+// import { EventService } from '../../shared/services/event.service';
 
 @Component({
   selector: 'app-mall-map',
