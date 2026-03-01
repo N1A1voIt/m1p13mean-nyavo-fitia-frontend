@@ -25,6 +25,7 @@ import { BillingListComponent } from './components/billing/billing-list.componen
 import { UtilityManagementComponent } from './components/utility/utility-management.component';
 import { MaintenanceComponent } from './components/maintenance/maintenance.component';
 import { EventCalendarComponent } from './components/comms/event-calendar.component';
+import { MarketplaceComponent } from './components/marketplace/marketplace.component';
 
 // Admin Imports
 // import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -91,7 +92,7 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard(['client', 'admin'])],
         children: [
             { path: 'map', component: MallMapComponent },
-            // { path: 'marketplace', component: MarketplaceComponent },
+            { path: 'marketplace', component: MarketplaceComponent },
             // { path: 'loyalty', component: LoyaltyDashboardComponent },
             // { path: 'reservations', component: ReservationBookingComponent },
             { path: '', redirectTo: 'map', pathMatch: 'full' }
