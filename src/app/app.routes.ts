@@ -15,6 +15,7 @@ import { ShopLayoutComponent } from './layouts/shop-layout.component';
 import { InventoryComponent } from './components/shop-erp/inventory.component';
 import { POSComponent } from './components/pos/pos.component';
 import { AdminLayoutComponent } from './layouts/admin-layout.component';
+import { OrderManagementComponent } from './components/orders/order-management.component';
 
 // Admin Imports
 // import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -69,7 +70,7 @@ export const routes: Routes = [
         children: [
             { path: 'inventory', component: InventoryComponent },
             { path: 'pos', component: POSComponent },
-            // { path: 'orders', component: OrderManagementComponent },
+            { path: 'orders', component: OrderManagementComponent },
             // { path: 'accounting', component: ShopAccountingComponent },
             // { path: 'billing', component: ShopBillingComponent },
             // { path: '', redirectTo: 'inventory', pathMatch: 'full' }
