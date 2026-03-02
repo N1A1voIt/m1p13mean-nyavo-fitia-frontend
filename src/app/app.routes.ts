@@ -44,10 +44,8 @@ import { MarketplaceComponent } from './components/marketplace/marketplace.compo
 //import { ShopBillingComponent } from './components/billing/shop-billing.component';
 
 // Client Imports
-//import { MallMapComponent } from './components/map/mall-map.component';
-//import { MarketplaceComponent } from './components/marketplace/marketplace.component';
-//import { LoyaltyDashboardComponent } from './components/loyalty/loyalty-dashboard.component';
-//import { ReservationBookingComponent } from './components/reservations/reservation-booking.component';
+import { LoyaltyDashboardComponent } from './components/loyalty/loyalty-dashboard.component';
+import { ReservationBookingComponent } from './components/reservations/reservation-booking.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -93,8 +91,8 @@ export const routes: Routes = [
         children: [
             { path: 'map', component: MallMapComponent },
             { path: 'marketplace', component: MarketplaceComponent },
-            // { path: 'loyalty', component: LoyaltyDashboardComponent },
-            // { path: 'reservations', component: ReservationBookingComponent },
+            { path: 'loyalty', component: LoyaltyDashboardComponent },
+            { path: 'reservations', component: ReservationBookingComponent },
             { path: '', redirectTo: 'map', pathMatch: 'full' }
         ]
     }

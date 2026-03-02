@@ -73,45 +73,71 @@ export class MarketplaceComponent implements OnInit {
   loadCart(): void {
     this.cartService.getCart().subscribe(res => {
       if (res.data && res.data.items) {
-        this.cart = res.data.items.map((item: any) => ({
-          product: item.product,
-          quantity: item.quantity
-        }));
+        this.cart = res.data.items
+          .filter((item: any) => item.product) // Filter out deleted products
+          .map((item: any) => ({
+            product: item.product,
+            quantity: item.quantity
+          }));
         this.groupCart();
       }
     });
   }
 
   saveCart(): void {
-    this.cartService.updateCart(this.cart).subscribe();
+    this.cartService.updateCart(this.cart).subscribe({
+      next: (res) => {
+        // Successfully updated
+      },
+      error: (err) => {
+        // Handle stock errors from backend
+        const errorMessage = err.error?.message || 'Error updating cart';
+        alert(errorMessage);
+        this.loadCart(); // Refresh to sync with valid state
+      }
+    });
   }
 
   addToCart(product: any): void {
+    if (product.stock <= 0) {
+      alert(`Sorry, ${product.name} is out of stock.`);
+      return;
+    }
+
     const item = this.cart.find(c => c.product._id === product._id);
     if (item) {
-        item.quantity++;
+      if (item.quantity + 1 > product.stock) {
+        alert(`Cannot add more. Only ${product.stock} items left in stock.`);
+        return;
+      }
+      item.quantity++;
     } else {
-        this.cart.push({ product, quantity: 1 });
+      this.cart.push({ product, quantity: 1 });
     }
     this.groupCart();
     this.saveCart();
     this.isCartOpen = true;
   }
-  
+
   removeFromCart(index: number) {
-      this.cart.splice(index, 1);
-      this.groupCart();
-      this.saveCart();
+    this.cart.splice(index, 1);
+    this.groupCart();
+    this.saveCart();
   }
-  
+
   updateQuantity(index: number, change: number) {
-      if (this.cart[index].quantity + change > 0) {
-          this.cart[index].quantity += change;
-      } else {
-          this.cart.splice(index, 1);
+    const item = this.cart[index];
+    if (item.quantity + change > 0) {
+      if (change > 0 && item.quantity + change > item.product.stock) {
+        alert(`Cannot add more. Only ${item.product.stock} items left in stock.`);
+        return;
       }
-      this.groupCart();
-      this.saveCart();
+      item.quantity += change;
+    } else {
+      this.cart.splice(index, 1);
+    }
+    this.groupCart();
+    this.saveCart();
   }
   
   getCartTotal(): number {
@@ -146,16 +172,18 @@ export class MarketplaceComponent implements OnInit {
       });
       
       forkJoin(requests).subscribe({
-          next: () => {
-              alert('Orders placed successfully! Check your reservations tab.');
-              this.cart = [];
-              this.cartService.clearCart().subscribe();
-              this.isCartOpen = false;
-          },
-          error: (err) => {
-              console.error(err);
-              alert('Error placing orders.');
-          }
+        next: () => {
+          alert('Orders placed successfully! Check your reservations tab.');
+          this.cart = [];
+          this.cartService.clearCart().subscribe();
+          this.isCartOpen = false;
+        },
+        error: (err) => {
+          console.error(err);
+          const errorMsg = err.error?.message || 'Error placing orders.';
+          alert(errorMsg);
+          this.loadCart(); // Refresh cart to show real stock status
+        }
       });
   }
 }
