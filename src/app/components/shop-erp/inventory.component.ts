@@ -13,12 +13,15 @@ import { ShopERPService } from '../../shared/services/shop-erp.service';
 })
 export class InventoryComponent implements OnInit {
   products: any[] = [];
+  categories: string[] = [];
   lowStockCount = 0;
   shopId: string = '';
   
   // Modals state
   isProductModalOpen = false;
   isMovementModalOpen = false;
+  isAddingCategory = false;
+  newCategoryName = '';
   activeTab = 'inventory'; // 'inventory' | 'movements'
   
   // Form models
@@ -33,6 +36,7 @@ export class InventoryComponent implements OnInit {
       if (user?.shopId) {
         this.shopId = user.shopId;
         this.loadProducts();
+        this.loadCategories();
       }
     });
   }
@@ -42,6 +46,27 @@ export class InventoryComponent implements OnInit {
       this.products = res.data;
       this.lowStockCount = this.products.filter(p => p.stock <= p.minStockLevel).length;
     });
+  }
+
+  loadCategories() {
+    this.shopERPService.getCategories(this.shopId).subscribe(res => {
+      this.categories = res.data;
+    });
+  }
+
+  toggleAddCategory() {
+    this.isAddingCategory = !this.isAddingCategory;
+    if (!this.isAddingCategory) this.newCategoryName = '';
+  }
+
+  confirmAddCategory() {
+    if (this.newCategoryName.trim()) {
+      if (!this.categories.includes(this.newCategoryName.trim())) {
+        this.categories.push(this.newCategoryName.trim());
+      }
+      this.selectedProduct.category = this.newCategoryName.trim();
+      this.toggleAddCategory();
+    }
   }
 
   loadMovements() {
@@ -58,7 +83,7 @@ export class InventoryComponent implements OnInit {
   }
 
   getEmptyProduct() {
-    return { name: '', sku: '', category: '', price: 0, stock: 0, minStockLevel: 5, active: true };
+    return { name: '', sku: '', category: '', price: 0, buyPrice: 0, stock: 0, minStockLevel: 5, active: true };
   }
 
   getEmptyMovement() {
@@ -78,11 +103,13 @@ export class InventoryComponent implements OnInit {
     if (this.selectedProduct._id) {
       this.shopERPService.updateProduct(this.selectedProduct._id, this.selectedProduct).subscribe(res => {
         this.loadProducts();
+        this.loadCategories();
         this.closeProductModal();
       });
     } else {
       this.shopERPService.addProduct(this.selectedProduct).subscribe(res => {
         this.loadProducts();
+        this.loadCategories();
         this.closeProductModal();
       });
     }

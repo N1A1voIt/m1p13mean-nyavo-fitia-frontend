@@ -6,39 +6,50 @@
 <!-- KPI Row -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
   <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Today</p>
+    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Today Revenue / Benefit</p>
     <p class="text-2xl font-black text-gray-900">{{ stats?.todayRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+    <p class="text-xs font-bold text-green-600 mt-1">+ {{ stats?.todayBenefit | currency:'MGA':'symbol':'1.0-0' }} benefit</p>
   </div>
   <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">This Month</p>
+    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">This Month Revenue / Benefit</p>
     <p class="text-2xl font-black text-gray-900">{{ stats?.thisMonthRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+    <p class="text-xs font-bold text-green-600 mt-1">+ {{ stats?.thisMonthBenefit | currency:'MGA':'symbol':'1.0-0' }} benefit</p>
   </div>
   <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Last Month</p>
+    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Last Month Revenue / Benefit</p>
     <p class="text-2xl font-black text-gray-900">{{ stats?.lastMonthRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+    <p class="text-xs font-bold text-green-600 mt-1">+ {{ stats?.lastMonthBenefit | currency:'MGA':'symbol':'1.0-0' }} benefit</p>
   </div>
   <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">MoM Growth</p>
-    <p class="text-2xl font-black" [ngClass]="stats?.growthPct >= 0 ? 'text-green-600' : 'text-red-500'">
-      {{ stats?.growthPct != null ? (stats.growthPct > 0 ? '+' : '') + stats.growthPct + '%' : '—' }}
-    </p>
+    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">MoM Revenue / Benefit Growth</p>
+    <div class="flex items-end gap-2">
+      <p class="text-2xl font-black" [ngClass]="stats?.growthPct >= 0 ? 'text-green-600' : 'text-red-500'">
+        {{ stats?.growthPct != null ? (stats.growthPct > 0 ? '+' : '') + stats.growthPct + '%' : '—' }} Rev.
+      </p>
+      <p class="text-sm font-bold pb-1" [ngClass]="stats?.benefitGrowthPct >= 0 ? 'text-green-500' : 'text-red-400'">
+        {{ stats?.benefitGrowthPct != null ? (stats.benefitGrowthPct > 0 ? '+' : '') + stats.benefitGrowthPct + '%' : '—' }} Ben.
+      </p>
+    </div>
   </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
   <!-- Lifetime Revenue + Channel Split -->
   <div class="glass p-8 bg-white border-gray-100 shadow-sm border-t-4 border-pink-500 animate-fade">
-    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-4">Lifetime Revenue (All Channels)</p>
+    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-4">Lifetime Revenue & Benefit</p>
     <p class="text-5xl font-black font-display text-pink-600">{{ stats?.lifetimeRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+    <p class="text-xl font-bold text-green-600 mt-2">+ {{ stats?.lifetimeBenefit | currency:'MGA':'symbol':'1.0-0' }} benefit</p>
     <div class="mt-6 grid grid-cols-2 gap-3">
       <div class="bg-gray-50 rounded-xl p-3">
         <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">🏪 POS Register</p>
         <p class="text-lg font-black text-gray-800">{{ stats?.posRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+        <p class="text-xs font-bold text-green-600">{{ stats?.posBenefit | currency:'MGA':'symbol':'1.0-0' }} ben.</p>
         <p class="text-[9px] text-gray-400 mt-0.5">{{ stats?.posCount }} transactions</p>
       </div>
       <div class="bg-gray-50 rounded-xl p-3">
         <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">🌐 Online Orders</p>
         <p class="text-lg font-black text-gray-800">{{ stats?.onlineRevenue | currency:'MGA':'symbol':'1.0-0' }}</p>
+        <p class="text-xs font-bold text-green-600">{{ stats?.onlineBenefit | currency:'MGA':'symbol':'1.0-0' }} ben.</p>
         <p class="text-[9px] text-gray-400 mt-0.5">{{ stats?.onlineCount }} orders</p>
       </div>
     </div>
